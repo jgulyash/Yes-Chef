@@ -1,0 +1,945 @@
+/* Yes Chef! — product UI (Phase C). Design source: docs/mockups/mockup-v2.html,
+   with the accessibility floor from the 2026-07-04 UX pass (AA contrast, 44px targets).
+   Fonts are self-hosted — zero external requests. */
+
+@font-face {
+  font-family: "Manrope";
+  src: url("/fonts/manrope-var.woff2") format("woff2");
+  font-weight: 400 800;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Inter";
+  src: url("/fonts/inter-var.woff2") format("woff2");
+  font-weight: 400 700;
+  font-display: swap;
+}
+
+:root {
+  --paper: #fbf6ee;
+  --surface: #ffffff;
+  --surface-2: #f6efe4;
+  --ink: #2b2723;
+  --muted: #6e6557; /* AA on paper + white */
+  --hair: #ece3d5;
+  --basil: #3e7d54;
+  --basil-d: #2f6341;
+  --basil-tint: #e6f0e9;
+  --paprika: #d85c34;
+  --paprika-d: #a8431d; /* AA-safe on tints */
+  --paprika-tint: #fbebe2;
+  --amber: #b97613; /* AA text on amber tint */
+  --amber-tint: #fbefd8;
+  --red: #b02e20;
+  --red-tint: #f7e2dc;
+  --z-pantry: #d99a3c;
+  --z-refrigerated: #2f9c9c;
+  --z-frozen: #5b9bd5;
+  --z-deep_freezer: #5c6bc0;
+  --z-counter: #a98b54;
+  --z-recipes: #c05f8a;
+  --shadow: 0 1px 2px rgba(43, 39, 35, 0.05), 0 6px 20px rgba(43, 39, 35, 0.06);
+  --shadow-lg: 0 10px 40px rgba(43, 39, 35, 0.16);
+  --serif: "Manrope", sans-serif; /* repointed by reskin layer below */
+  --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  font: 15px/1.45 var(--sans);
+  background: var(--paper);
+  color: var(--ink);
+}
+button { font: inherit; cursor: pointer; }
+
+/* ---- App frame: header + scrolling panel + bottom tabs ------------------------- */
+#app {
+  max-width: 480px;
+  margin: 0 auto;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--paper);
+}
+header.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px 8px;
+}
+.brand { display: flex; align-items: center; gap: 10px; }
+.logo-badge {
+  width: 36px; height: 36px; border-radius: 11px;
+  background: var(--basil);
+  display: grid; place-items: center;
+  box-shadow: var(--shadow);
+}
+.logo-badge svg { width: 24px; height: 24px; }
+.brand h1 { font-family: var(--serif); font-weight: 600; font-size: 22px; margin: 0; letter-spacing: -0.01em; }
+.brand .sub { font-size: 11px; color: var(--muted); margin-top: -2px; }
+
+main#panel { flex: 1; overflow-y: auto; padding: 4px 18px 24px; }
+h2.screen-title { font-family: var(--serif); font-weight: 600; font-size: 24px; margin: 8px 0 2px; }
+.screen-sub { color: var(--muted); font-size: 13px; margin: 0 0 14px; }
+
+nav.tabbar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid var(--hair);
+  background: var(--surface);
+  padding: 6px 8px calc(8px + env(safe-area-inset-bottom));
+}
+.tab {
+  min-height: 48px;
+  border: 0; background: none;
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  color: var(--muted); border-radius: 12px;
+  position: relative;
+}
+.tab .ti { font-size: 20px; line-height: 1.1; }
+.tab .tl { font-size: 10.5px; font-weight: 600; }
+.tab.on { color: var(--paprika-d); background: var(--paprika-tint); }
+.tab .tab-badge {
+  position: absolute; top: 2px; right: 18%;
+  min-width: 17px; height: 17px; border-radius: 999px;
+  background: var(--red); color: #fff;
+  font-size: 10px; font-weight: 700;
+  display: grid; place-items: center; padding: 0 4px;
+}
+
+/* ---- Shared bits ---------------------------------------------------------------- */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--hair);
+  border-radius: 16px;
+  padding: 14px 16px;
+  margin: 10px 0;
+  box-shadow: var(--shadow);
+}
+.hint { color: var(--muted); font-size: 13px; margin: 0 0 10px; }
+.empty { color: var(--muted); text-align: center; padding: 18px 0; }
+.pill {
+  font-size: 11px; padding: 2px 8px; border-radius: 999px; font-weight: 600;
+  display: inline-block;
+}
+.pill.out { background: var(--red-tint); color: var(--red); }
+.pill.low { background: var(--amber-tint); color: var(--amber); }
+.pill.confirm { background: var(--amber-tint); color: var(--amber); }
+.pill.ready { background: var(--basil-tint); color: var(--basil-d); }
+.pill.missing { background: var(--red-tint); color: var(--red); }
+button.primary {
+  min-height: 44px; padding: 10px 16px;
+  background: var(--basil); color: #fff;
+  border: 0; border-radius: 12px; font-weight: 600;
+}
+button.primary:hover { background: var(--basil-d); }
+button.ghost {
+  min-height: 44px; padding: 10px 14px;
+  background: var(--surface); color: var(--ink);
+  border: 1px solid var(--hair); border-radius: 12px;
+}
+button.ghost:hover { background: var(--surface-2); }
+button:disabled { opacity: 0.55; cursor: default; }
+button.busy { position: relative; color: transparent !important; }
+button.busy::after {
+  content: ""; position: absolute; inset: 0; margin: auto;
+  width: 16px; height: 16px;
+  border: 2px solid var(--muted); border-top-color: transparent;
+  border-radius: 50%; animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+input, select, textarea {
+  font: inherit; min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--hair); border-radius: 12px;
+  background: var(--surface); color: var(--ink);
+  width: 100%;
+}
+textarea { min-height: 0; }
+.field { display: flex; flex-direction: column; gap: 4px; margin: 8px 0; }
+.field label { font-size: 12px; font-weight: 600; color: var(--muted); }
+.field-row { display: flex; gap: 10px; }
+.field-row .field { flex: 1; }
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* ---- List tab -------------------------------------------------------------------- */
+.stat-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 4px 0 12px; }
+.stat-tiles .tile {
+  background: var(--surface); border: 1px solid var(--hair); border-radius: 14px;
+  padding: 10px 12px; box-shadow: var(--shadow);
+}
+.tile .big { font-family: var(--serif); font-size: 24px; font-weight: 600; display: block; }
+.tile.t-out .big { color: var(--red); }
+.tile.t-low .big { color: var(--amber); }
+.tile .lbl { font-size: 11px; color: var(--muted); }
+.seg {
+  display: grid; grid-template-columns: 1fr 1fr;
+  background: var(--surface-2); border-radius: 12px; padding: 3px; margin: 0 0 10px;
+}
+.seg button {
+  min-height: 40px; border: 0; border-radius: 10px; background: none;
+  font-weight: 600; color: var(--muted);
+}
+.seg button.on { background: var(--surface); color: var(--ink); box-shadow: var(--shadow); }
+.group-head {
+  display: flex; align-items: center; gap: 8px;
+  margin: 16px 2px 4px;
+  font-size: 12px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+  color: var(--muted);
+}
+.group-head .dot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+.lrow {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--surface); border: 1px solid var(--hair); border-radius: 14px;
+  padding: 10px 12px; margin: 7px 0; box-shadow: var(--shadow);
+}
+.lrow.done { opacity: 0.45; }
+.lrow.logged .verdicts { visibility: hidden; }
+.checkoff {
+  width: 44px; height: 44px; flex: none;
+  border: 0; background: none; display: grid; place-items: center;
+}
+.checkoff .ring {
+  width: 24px; height: 24px; border-radius: 8px;
+  border: 2px solid var(--hair); display: grid; place-items: center;
+  color: transparent; font-size: 14px; font-weight: 700;
+}
+.lrow.done .checkoff .ring { background: var(--basil); border-color: var(--basil); color: #fff; }
+.lrow .body { flex: 1; min-width: 0; }
+.lrow .nm { font-weight: 600; display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+.lrow .meta { font-size: 12.5px; color: var(--muted); margin-top: 1px; }
+.verdicts { display: flex; gap: 6px; }
+.verdicts button {
+  min-width: 44px; min-height: 44px; padding: 4px 8px;
+  border: 1px solid var(--hair); background: var(--surface);
+  border-radius: 10px; font-size: 13px;
+}
+.lrow .open-detail { border: 0; background: none; color: var(--muted); font-size: 18px; min-width: 34px; min-height: 44px; }
+
+/* ---- Kitchen tab ------------------------------------------------------------------ */
+.places { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.place-card {
+  background: var(--surface); border: 1px solid var(--hair); border-radius: 16px;
+  padding: 12px 14px; box-shadow: var(--shadow);
+  text-align: left; min-height: 84px; border-top: 4px solid var(--hair);
+}
+.place-card .ic { font-size: 22px; }
+.place-card .pn { font-weight: 700; margin-top: 4px; }
+.place-card .pm { font-size: 12px; color: var(--muted); margin-top: 1px; }
+.place-card .pm .warn { color: var(--paprika-d); font-weight: 600; }
+.back-btn { border: 0; background: none; color: var(--muted); font-weight: 600; padding: 8px 0; min-height: 44px; }
+.prow {
+  background: var(--surface); border: 1px solid var(--hair); border-radius: 14px;
+  padding: 10px 12px; margin: 8px 0; box-shadow: var(--shadow);
+}
+.prow .top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.prow .nm { font-weight: 600; }
+.prow .controls { display: flex; align-items: center; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+.chips { display: flex; gap: 6px; flex: 1; }
+.chips button {
+  flex: 1; min-height: 44px; border-radius: 10px;
+  border: 1px solid var(--hair); background: var(--surface); font-size: 13px; font-weight: 600;
+  color: var(--muted);
+}
+.chips button.on { background: var(--basil-tint); border-color: var(--basil); color: var(--basil-d); }
+.stepper { display: flex; align-items: center; border: 1px solid var(--hair); border-radius: 12px; overflow: hidden; }
+.stepper button { width: 46px; min-height: 44px; border: 0; background: var(--surface); font-size: 20px; color: var(--paprika-d); font-weight: 600; }
+.stepper .cnt { min-width: 44px; text-align: center; font-weight: 700; }
+.linecheck-btn {
+  width: 100%; margin-top: 10px;
+  background: var(--surface-2); border: 1.5px dashed var(--hair); border-radius: 14px;
+  min-height: 52px; font-weight: 700; color: var(--basil-d);
+}
+
+/* Line Check overlay */
+.overlay {
+  position: fixed; inset: 0; z-index: 60;
+  background: rgba(43, 39, 35, 0.45);
+  display: grid; place-items: center; padding: 20px;
+}
+.overlay .sheet-card {
+  width: min(440px, 94vw);
+  background: var(--paper); border-radius: 20px;
+  padding: 18px; box-shadow: var(--shadow-lg);
+  max-height: 86dvh; overflow-y: auto;
+}
+.lc-progress { height: 6px; background: var(--surface-2); border-radius: 999px; overflow: hidden; margin: 10px 0 14px; }
+.lc-progress span { display: block; height: 100%; background: var(--basil); transition: width 0.25s; }
+.lc-item-name { font-family: var(--serif); font-size: 22px; font-weight: 600; margin: 4px 0 10px; }
+.lc-actions { display: flex; gap: 8px; margin-top: 14px; }
+.lc-actions button { flex: 1; }
+
+/* ---- Item detail sheet ------------------------------------------------------------- */
+.sheet-backdrop { position: fixed; inset: 0; z-index: 50; background: rgba(43, 39, 35, 0.45); }
+.sheet {
+  position: fixed; z-index: 55; left: 50%; transform: translateX(-50%);
+  bottom: 0; width: min(480px, 100vw);
+  background: var(--paper); border-radius: 22px 22px 0 0;
+  box-shadow: var(--shadow-lg);
+  max-height: 88dvh; overflow-y: auto; padding: 16px 18px 26px;
+}
+.sheet .grab { width: 40px; height: 4px; border-radius: 999px; background: var(--hair); margin: 0 auto 12px; }
+.sheet h3 { font-family: var(--serif); font-size: 21px; margin: 0; }
+.sheet .zline { color: var(--muted); font-size: 12.5px; margin: 2px 0 12px; }
+.sheet-section { border-top: 1px solid var(--hair); padding-top: 12px; margin-top: 14px; }
+.sheet-section .st { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin-bottom: 8px; }
+
+/* ---- Recipes ------------------------------------------------------------------------ */
+.rrow {
+  background: var(--surface); border: 1px solid var(--hair); border-radius: 14px;
+  padding: 12px 14px; margin: 8px 0; box-shadow: var(--shadow);
+}
+.rrow .top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.rrow .nm { font-weight: 700; }
+.rrow .ing { font-size: 12.5px; color: var(--muted); margin-top: 3px; }
+.rrow .actions { display: flex; gap: 8px; margin-top: 10px; }
+.ing-editor { border: 1px dashed var(--hair); border-radius: 12px; padding: 10px; margin: 8px 0; }
+.ing-line { display: flex; gap: 8px; align-items: center; margin: 6px 0; }
+.ing-line select { flex: 2; }
+.ing-line input[type="number"] { flex: 1; min-width: 64px; }
+.ing-line label.opt { display: flex; align-items: center; gap: 4px; font-size: 12px; color: var(--muted); white-space: nowrap; }
+.ing-line input[type="checkbox"] { width: 20px; height: 20px; min-height: 0; }
+.ing-line .rm { border: 0; background: none; color: var(--red); font-size: 17px; min-width: 34px; min-height: 44px; }
+
+/* ---- Add tab ------------------------------------------------------------------------ */
+.preview {
+  border: 1px dashed var(--hair); border-radius: 12px;
+  padding: 10px 12px; margin: 10px 0; background: var(--surface-2); font-size: 14px;
+}
+.preview-title { font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 4px; }
+.urow {
+  display: flex; flex-direction: column; gap: 8px;
+  background: var(--surface); border: 1px solid var(--hair); border-radius: 14px;
+  padding: 10px 12px; margin: 8px 0;
+}
+.urow .q { font-weight: 600; }
+.urow .acts { display: flex; gap: 8px; }
+.urow select { flex: 1; }
+
+/* ---- Stats -------------------------------------------------------------------------- */
+.metric-tiles { display: grid; gap: 10px; }
+.metric-tiles .mtile {
+  display: flex; align-items: center; gap: 14px;
+  background: var(--surface); border: 1px solid var(--hair); border-radius: 14px;
+  padding: 12px 14px; box-shadow: var(--shadow);
+}
+.mtile .big { font-family: var(--serif); font-size: 30px; font-weight: 600; color: var(--basil-d); min-width: 74px; }
+.mtile .lbl { font-weight: 600; }
+.mtile .sub { font-size: 12px; color: var(--muted); }
+
+/* ---- Onboarding --------------------------------------------------------------------- */
+.intro-steps { margin: 8px 0 12px; padding-left: 20px; }
+.intro-steps li { margin: 7px 0; }
+
+/* ---- Toasts --------------------------------------------------------------------------- */
+#toasts {
+  position: fixed; bottom: 84px; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; gap: 8px; z-index: 100;
+  width: min(92vw, 420px);
+}
+.toast {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  background: var(--ink); color: #fff; border-radius: 12px;
+  padding: 12px 16px; font-size: 14px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
+  animation: toast-in 0.18s ease-out;
+}
+.toast.error { background: var(--red); }
+@keyframes toast-in { from { opacity: 0; transform: translateY(8px); } }
+.undo-btn {
+  min-height: 32px; padding: 4px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.5); background: transparent;
+  color: #fff; border-radius: 8px; font-weight: 600;
+}
+.undo-btn:hover { background: rgba(255, 255, 255, 0.12); }
+.tab-badge[hidden] { display: none; }
+
+/* "Remove from kitchen" — plain words, quiet danger styling */
+.danger-link {
+  width: 100%;
+  min-height: 44px;
+  background: none;
+  border: 1px solid var(--red-tint);
+  color: var(--red);
+  border-radius: 12px;
+  font-weight: 600;
+}
+.danger-link:hover { background: var(--red-tint); }
+
+/* ================================================================================
+   POLISH PASS (Phase C session 2) — depth, motion, identity.
+   Depth model: the page ground is a darker cream so white surfaces visibly FLOAT.
+   Every raised element carries a two-layer shadow (tight key + soft ambient), grows
+   on hover, and compresses on press. Appended last so it wins the cascade.
+   ================================================================================ */
+
+:root {
+  --ground: #f1eadc;            /* page ground — darker than surfaces so they float */
+  --key: rgba(43, 39, 35, 0.10);      /* tight key shadow */
+  --ambient: rgba(43, 39, 35, 0.07);  /* soft ambient shadow */
+  --elev-1: 0 1px 2px var(--key), 0 5px 14px var(--ambient);
+  --elev-2: 0 2px 4px var(--key), 0 10px 26px rgba(43, 39, 35, 0.12);
+  --elev-3: 0 6px 14px var(--key), 0 22px 48px rgba(43, 39, 35, 0.20);
+  --spring: cubic-bezier(0.34, 1.4, 0.5, 1);
+}
+
+body, #app { background: var(--ground); }
+header.topbar { background: var(--ground); }
+
+/* Raised surfaces */
+.card, .lrow, .prow, .rrow, .stat-tiles .tile, .urow {
+  background: var(--surface);
+  border-color: rgba(43, 39, 35, 0.05);
+  box-shadow: var(--elev-1);
+}
+.place-card {
+  border-color: rgba(43, 39, 35, 0.05);
+  border-top: 4px solid var(--zc, var(--hair));
+  box-shadow: var(--elev-1);
+  transition: transform 0.16s var(--spring), box-shadow 0.16s ease;
+}
+.place-card:hover { transform: translateY(-2px); box-shadow: var(--elev-2); }
+.place-card:active { transform: translateY(0) scale(0.985); box-shadow: var(--elev-1); }
+.lrow, .prow, .rrow { transition: box-shadow 0.16s ease, transform 0.16s ease, opacity 0.25s ease; }
+.lrow:hover, .prow:hover, .rrow:hover { box-shadow: var(--elev-2); }
+
+/* Buttons read RAISED: top inset highlight + bottom edge + lift/press */
+button.primary, button.ghost, .verdicts button, .chips button, .stepper, .linecheck-btn, .danger-link {
+  transition: transform 0.12s var(--spring), box-shadow 0.14s ease, background 0.14s ease;
+}
+button.primary {
+  background: linear-gradient(180deg, #489361, var(--basil) 55%, var(--basil-d));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28), 0 1px 2px var(--key), 0 4px 10px rgba(47, 99, 65, 0.32);
+}
+button.primary:hover { transform: translateY(-1px); box-shadow: inset 0 1px 0 rgba(255,255,255,0.28), 0 2px 4px var(--key), 0 8px 18px rgba(47, 99, 65, 0.38); }
+button.ghost, .verdicts button {
+  background: linear-gradient(180deg, #ffffff, #faf7f1);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 1px 2px var(--key), 0 3px 8px var(--ambient);
+}
+button.ghost:hover, .verdicts button:hover { transform: translateY(-1px); box-shadow: inset 0 1px 0 rgba(255,255,255,0.9), 0 2px 4px var(--key), 0 6px 14px var(--ambient); }
+button.primary:active, button.ghost:active, .verdicts button:active, .chips button:active,
+.stepper button:active, .linecheck-btn:active, .danger-link:active, .checkoff:active .ring {
+  transform: translateY(1px) scale(0.97);
+  box-shadow: inset 0 1px 3px rgba(43, 39, 35, 0.12);
+}
+
+/* Chips: selected = raised + tinted; unselected = flat on the row */
+.chips button { background: var(--surface-2); border-color: transparent; box-shadow: none; }
+.chips button.on {
+  background: linear-gradient(180deg, #f0f7f2, var(--basil-tint));
+  border-color: var(--basil);
+  color: var(--basil-d);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 2px 6px rgba(62, 125, 84, 0.25);
+  transform: translateY(-1px);
+}
+.stepper { background: var(--surface); box-shadow: inset 0 1px 0 rgba(255,255,255,.9), 0 1px 2px var(--key), 0 3px 8px var(--ambient); border-color: rgba(43,39,35,.08); }
+
+/* Tab bar floats above content; active tab is a raised pill */
+nav.tabbar {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(43, 39, 35, 0.06);
+  box-shadow: 0 -4px 18px rgba(43, 39, 35, 0.08);
+}
+.tab { transition: transform 0.14s var(--spring), background 0.14s ease, color 0.14s ease; }
+.tab.on {
+  background: linear-gradient(180deg, #fdf0e9, var(--paprika-tint));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 2px 6px rgba(216, 92, 52, 0.18);
+  transform: translateY(-2px);
+}
+.tab:active { transform: scale(0.94); }
+
+/* Sheet slides up; backdrops fade */
+.sheet { animation: sheet-up 0.32s var(--spring); box-shadow: var(--elev-3); }
+@keyframes sheet-up { from { transform: translate(-50%, 12%); opacity: 0.4; } to { transform: translate(-50%, 0); opacity: 1; } }
+.sheet-backdrop, .overlay { animation: fade-in 0.2s ease-out; }
+@keyframes fade-in { from { opacity: 0; } }
+.overlay .sheet-card { animation: card-pop 0.26s var(--spring); box-shadow: var(--elev-3); }
+@keyframes card-pop { from { transform: translateY(14px) scale(0.97); opacity: 0.5; } }
+
+/* Check-off: ring fills with a pop */
+.checkoff .ring { transition: background 0.15s ease, border-color 0.15s ease, transform 0.2s var(--spring); color: transparent; }
+.checkoff .ring svg { opacity: 0; transform: scale(0.4); transition: opacity 0.14s ease, transform 0.22s var(--spring); }
+.lrow.done .checkoff .ring { background: var(--basil); border-color: var(--basil); color: #fff; animation: ring-pop 0.28s var(--spring); }
+.lrow.done .checkoff .ring svg { opacity: 1; transform: scale(1); }
+@keyframes ring-pop { 45% { transform: scale(1.22); } }
+
+/* Remaining-count ticker */
+.ticker { display: inline-block; font-weight: 700; color: var(--paprika-d); animation: tick 0.25s var(--spring); }
+@keyframes tick { 40% { transform: scale(1.25); } }
+
+/* Level bars (bulk items) */
+.level-bar { height: 5px; border-radius: 999px; background: var(--surface-2); overflow: hidden; margin: 8px 0 2px; box-shadow: inset 0 1px 2px rgba(43, 39, 35, 0.08); }
+.level-bar span { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--paprika), #e6a23c, var(--basil)); transition: width 0.35s var(--spring); }
+
+/* Place-card top row: icon chip + stocked ring */
+.pc-top { display: flex; align-items: center; justify-content: space-between; }
+.ic-chip {
+  width: 36px; height: 36px; border-radius: 11px;
+  display: grid; place-items: center;
+  background: color-mix(in srgb, currentColor 12%, white);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 1px 3px var(--ambient);
+}
+.ic-chip.big { width: 44px; height: 44px; border-radius: 13px; }
+.ring-svg { width: 30px; height: 30px; }
+.place-head { display: flex; align-items: center; gap: 12px; margin-top: 4px; }
+.place-head .screen-title { margin: 0; }
+.place-head .screen-sub { margin: 0; }
+
+/* Empty states */
+.empty-state { text-align: center; color: var(--muted); padding: 26px 0 18px; }
+.empty-state svg { color: var(--basil); opacity: 0.55; }
+.empty-state p { margin: 8px 0 0; line-height: 1.5; }
+.empty-state.small { padding: 12px 0 6px; }
+
+/* Line-check completion: stroke-draw check */
+.draw-check { width: 68px; height: 68px; margin-top: 6px; }
+.draw-check circle { stroke: var(--zc, var(--basil)); stroke-width: 3; stroke-dasharray: 155; stroke-dashoffset: 155; animation: draw 0.5s ease-out forwards; }
+.draw-check path { stroke: var(--zc, var(--basil)); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 40; stroke-dashoffset: 40; animation: draw 0.35s 0.4s ease-out forwards; }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+
+/* Cook success beat */
+button.primary.cooked { background: linear-gradient(180deg, #52a06c, var(--basil-d)); pointer-events: none; }
+
+/* Skeleton shimmer */
+.skel { border-radius: 12px; background: linear-gradient(90deg, #ece5d8 25%, #f5efe4 45%, #ece5d8 65%); background-size: 200% 100%; animation: shimmer 1.1s linear infinite; }
+.skel-title { height: 30px; width: 45%; margin: 12px 0 6px; }
+.skel-sub { height: 14px; width: 70%; margin-bottom: 14px; }
+.skel-tile { height: 64px; }
+.skel-row { height: 74px; margin: 8px 0; }
+@keyframes shimmer { to { background-position: -200% 0; } }
+
+/* Icon alignment inside buttons */
+.ic-svg { vertical-align: -4px; }
+.back-btn { display: inline-flex; align-items: center; gap: 4px; }
+.linecheck-btn { display: flex; align-items: center; justify-content: center; gap: 8px; }
+
+/* View transitions (navigation only) */
+::view-transition-old(root) { animation: vt-out 0.16s ease both; }
+::view-transition-new(root) { animation: vt-in 0.2s ease both; }
+@keyframes vt-out { to { opacity: 0; transform: translateY(-4px); } }
+@keyframes vt-in { from { opacity: 0; transform: translateY(6px); } }
+
+/* Reduced motion: keep state changes visible, drop the theater */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}
+
+/* ================================================================================
+   MODERN RESKIN (2026-07-05) — serif retired, single accent, cooler neutrals.
+   --serif is repointed to Manrope so every rule and JS template modernizes at once;
+   the depth system from the polish pass is preserved. Appended last: wins the cascade.
+   ================================================================================ */
+
+:root {
+  --serif: "Manrope", var(--sans);       /* display face is now geometric sans */
+  --display: "Manrope", var(--sans);
+  --ink: #191917;                        /* near-black — modern contrast */
+  --muted: #63645c;                      /* cooler neutral, AA on white + ground */
+  --ground: #f0f0ec;                     /* porcelain, less yellow than cream */
+  --paper: #f0f0ec;
+  --surface-2: #f4f4f0;
+  --hair: #e7e7e1;
+  --accent: var(--basil);                /* ONE interactive accent */
+  --accent-d: var(--basil-d);
+  --accent-tint: var(--basil-tint);
+}
+
+/* Display type: bold, tight, confident */
+.brand h1 { font-family: var(--display); font-weight: 800; letter-spacing: -0.03em; }
+h2.screen-title { font-family: var(--display); font-weight: 800; font-size: 27px; letter-spacing: -0.03em; }
+.sheet h3, .lc-item-name, .overlay h3 { font-family: var(--display); font-weight: 800; letter-spacing: -0.02em; }
+.tile .big { font-family: var(--display); font-weight: 800; font-size: 26px; letter-spacing: -0.02em; }
+.mtile .big { font-family: var(--display); font-weight: 800; letter-spacing: -0.02em; }
+.group-head { font-weight: 800; letter-spacing: 0.07em; font-size: 11px; }
+.nm, .pn { font-weight: 700; }
+
+/* Single accent: the active tab moves from paprika to basil */
+.tab.on {
+  color: var(--accent-d);
+  background: linear-gradient(180deg, #eef5f0, var(--accent-tint));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 2px 6px rgba(62, 125, 84, 0.2);
+}
+.ticker { color: var(--accent-d); }
+.stepper button { color: var(--accent-d); }
+.linecheck-btn { color: var(--accent-d); }
+.cam .t, .rrow .warn { color: var(--accent-d); }
+.place-card .pm .warn { color: var(--amber); }  /* warnings stay amber (semantic) */
+
+/* Crisper modern surfaces: slightly tighter borders, cleaner seg control */
+.card, .lrow, .prow, .rrow, .stat-tiles .tile, .urow, .place-card { border-color: rgba(25, 25, 23, 0.05); }
+.seg { background: #e9e9e4; }
+.seg button.on { font-weight: 700; }
+nav.tabbar { background: rgba(252, 252, 251, 0.9); }
+
+/* Header: compact modern lockup */
+.brand .sub { letter-spacing: 0.01em; }
+
+/* ================================================================================
+   PALETTE V3 + DRAWER NAV + KITCHEN DASHBOARD (2026-07-05)
+   Cool neutral ground, white surfaces, calibrated vivid zone hues, modern green
+   accent, Inter tabular numerals. Top-left hamburger drawer replaces the tab bar.
+   Appended last: wins the cascade.
+   ================================================================================ */
+
+:root {
+  --ground: #f2f3f4;                  /* cool neutral — modern app ground */
+  --paper: #f2f3f4;
+  --surface: #ffffff;
+  --surface-2: #f6f7f7;
+  --ink: #17181a;
+  --muted: #5f646b;                   /* AA on white + ground */
+  --hair: #e5e7e9;
+  --key: rgba(20, 22, 25, 0.09);
+  --ambient: rgba(20, 22, 25, 0.06);
+  --accent: #17843f;                  /* modern green, AA as text on white */
+  --accent-d: #116330;
+  --accent-tint: #e4f3e9;
+  --basil: var(--accent);             /* brand controls flow through */
+  --basil-d: var(--accent-d);
+  --basil-tint: var(--accent-tint);
+  --amber: #b45309;
+  --amber-tint: #fef3e2;
+  --red: #dc2626;
+  --red-tint: #fee6e4;
+  --z-pantry: #d97706;
+  --z-refrigerated: #0284c7;
+  --z-frozen: #4f46e5;
+  --z-deep_freezer: #7c3aed;
+  --z-counter: #0d9488;
+  --z-recipes: #db2777;
+}
+.pill.out { color: #b91c1c; }
+.pill.low, .pill.confirm { color: var(--amber); }
+
+/* Numbers: Inter tabular — the modern data numeral */
+.tile .big, .mtile .big, .wt-num, .stepper .cnt, .count-pill, .tab-badge {
+  font-family: var(--sans);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+.tile .big { font-weight: 700; font-size: 25px; }
+.mtile .big { font-weight: 700; }
+
+/* Header: hamburger left, brand follows */
+header.topbar { justify-content: flex-start; gap: 10px; }
+#menu-btn {
+  position: relative;
+  width: 44px; height: 44px;
+  border: 1px solid var(--hair); border-radius: 12px;
+  background: var(--surface);
+  display: grid; place-items: center;
+  color: var(--ink);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.9), 0 1px 2px var(--key), 0 3px 8px var(--ambient);
+  transition: transform 0.12s var(--spring), box-shadow 0.14s ease;
+}
+#menu-btn:hover { transform: translateY(-1px); }
+#menu-btn:active { transform: translateY(1px) scale(0.96); }
+.menu-dot {
+  position: absolute; top: 8px; right: 8px;
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--red);
+}
+
+/* Drawer: slides from the left, floats at elevation 3 */
+#drawer {
+  position: fixed; z-index: 80;
+  top: 0; left: 0; bottom: 0;
+  width: min(300px, 82vw);
+  background: var(--surface);
+  box-shadow: var(--elev-3);
+  padding: 14px 12px calc(14px + env(safe-area-inset-bottom));
+  transform: translateX(-102%);
+  transition: transform 0.24s var(--spring);
+  display: flex; flex-direction: column; gap: 4px;
+}
+#drawer.open { transform: translateX(0); }
+#drawer-backdrop {
+  position: fixed; inset: 0; z-index: 75;
+  background: rgba(23, 24, 26, 0.4);
+  animation: fade-in 0.2s ease-out;
+}
+.drawer-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 4px 8px 12px;
+  border-bottom: 1px solid var(--hair);
+  margin-bottom: 8px;
+}
+.drawer-title { font-family: var(--display); font-weight: 800; font-size: 18px; letter-spacing: -0.02em; }
+#drawer-close { border: 0; background: none; color: var(--muted); width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; }
+#drawer-close:hover { background: var(--surface-2); }
+.drawer-item {
+  position: relative;
+  display: flex; align-items: center; gap: 12px;
+  min-height: 48px;
+  border: 0; border-radius: 12px;
+  background: none; color: var(--ink);
+  font-weight: 600; font-size: 15px;
+  padding: 0 12px;
+  text-align: left;
+  transition: background 0.14s ease, color 0.14s ease;
+}
+.drawer-item:hover { background: var(--surface-2); }
+.drawer-item.on { background: var(--accent-tint); color: var(--accent-d); }
+.drawer-item .tab-badge { position: static; margin-left: auto; }
+
+/* Kitchen dashboard */
+.week-tile {
+  width: 100%;
+  display: flex; align-items: center; justify-content: space-between;
+  background: linear-gradient(135deg, #1d9a4b, var(--accent-d));
+  color: #fff;
+  border: 0; border-radius: 16px;
+  padding: 14px 16px;
+  margin: 2px 0 12px;
+  box-shadow: 0 2px 4px var(--key), 0 10px 24px rgba(17, 99, 48, 0.35), inset 0 1px 0 rgba(255,255,255,0.22);
+  transition: transform 0.14s var(--spring), box-shadow 0.16s ease;
+}
+.week-tile:hover { transform: translateY(-2px); }
+.week-tile:active { transform: translateY(0) scale(0.985); }
+.wt-num { font-size: 30px; font-weight: 700; margin-right: 8px; vertical-align: -2px; }
+.wt-label { font-weight: 600; opacity: 0.92; }
+.pc-low { font-size: 11.5px; color: var(--amber); font-weight: 600; margin-top: 6px; }
+.pc-low.ok { color: var(--accent-d); }
+.attn-row {
+  width: 100%;
+  display: flex; align-items: center; gap: 10px;
+  background: var(--surface);
+  border: 1px solid var(--hair); border-radius: 13px;
+  min-height: 52px; padding: 8px 12px; margin: 6px 0;
+  box-shadow: var(--elev-1);
+  color: var(--ink); text-align: left;
+  transition: box-shadow 0.16s ease, transform 0.14s ease;
+}
+.attn-row:hover { box-shadow: var(--elev-2); transform: translateY(-1px); }
+.attn-row .dot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+.attn-name { font-weight: 700; }
+.attn-meta { color: var(--muted); font-size: 12.5px; margin-left: auto; }
+.ready-strip { display: flex; gap: 8px; overflow-x: auto; padding: 2px 0 8px; }
+.ready-chip {
+  flex: none;
+  display: inline-flex; align-items: center; gap: 6px;
+  border: 1px solid var(--hair); border-radius: 999px;
+  background: var(--surface); color: var(--accent-d);
+  font-weight: 600; font-size: 13.5px;
+  min-height: 40px; padding: 0 14px;
+  box-shadow: var(--elev-1);
+}
+
+/* Panel bottom padding now that the tab bar is gone */
+main#panel { padding-bottom: 34px; }
+#toasts { bottom: 20px; }
+
+/* Drawer visibility handled in CSS: offscreen + invisible when closed, one class opens */
+#drawer {
+  visibility: hidden;
+  transition: transform 0.24s var(--spring), visibility 0s 0.24s;
+}
+#drawer.open {
+  visibility: visible;
+  transform: translateX(0);
+  transition: transform 0.24s var(--spring), visibility 0s;
+}
+
+/* Drawer slide via `left` (not transform) — immune to any transform interference
+   from view-transition state; a 300px fixed panel animates `left` imperceptibly. */
+#drawer {
+  transform: none;
+  left: -320px;
+  transition: left 0.24s var(--spring), visibility 0s 0.24s;
+}
+#drawer.open {
+  transform: none;
+  left: 0;
+  transition: left 0.24s var(--spring), visibility 0s;
+}
+
+/* FINAL drawer mechanics: NO transitions on drawer position/visibility — a frozen
+   transition holds its value above even !important (observed under window occlusion).
+   The class sets the true static state; the slide is a disposable WAAPI garnish in JS. */
+#drawer { transition: none; left: -320px; visibility: hidden; }
+#drawer.open { transition: none; left: 0; visibility: visible; }
+
+/* ================================================================================
+   ACCENT V4 — monochrome interactive (graphite), color = meaning only.
+   Brand/interactive: graphite. Semantic green survives ONLY for stocked/ready.
+   ================================================================================ */
+
+:root {
+  --accent: #1a1b1e;          /* graphite — the interactive/brand accent */
+  --accent-d: #000000;
+  --accent-tint: #ececee;
+  --basil: var(--accent);     /* legacy hooks (logo badge bg, primaries) follow */
+  --basil-d: var(--accent-d);
+  --basil-tint: var(--accent-tint);
+  --good: #16a34a;            /* SEMANTIC green: stocked / ready / level-good only */
+  --good-d: #15803d;
+  --good-tint: #e7f6ec;
+}
+
+/* Primary buttons: modern black */
+button.primary {
+  background: linear-gradient(180deg, #2a2b2f, #1a1b1e 60%, #101113);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 1px 2px var(--key), 0 4px 10px rgba(16, 17, 19, 0.3);
+}
+button.primary:hover { background: #000; box-shadow: inset 0 1px 0 rgba(255,255,255,0.14), 0 2px 4px var(--key), 0 8px 18px rgba(16,17,19,0.35); }
+button.primary.cooked { background: var(--good-d); }
+
+/* Neutral selected/active states */
+.drawer-item.on { background: var(--accent-tint); color: var(--ink); }
+.chips button.on {
+  background: #1f2023; border-color: #1f2023; color: #fff;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.14), 0 2px 6px rgba(16,17,19,0.3);
+}
+.ticker { color: var(--ink); }
+.stepper button { color: var(--ink); }
+.linecheck-btn { color: var(--ink); }
+.ready-chip { color: var(--ink); }
+.lrow.done .checkoff .ring { background: var(--ink); border-color: var(--ink); }
+
+/* Semantic green: stocked / ready / level-good only */
+.pill.ready { background: var(--good-tint); color: var(--good-d); }
+.pc-low.ok { color: var(--good-d); }
+.level-bar span { background: linear-gradient(90deg, #dc2626, #f59e0b, var(--good)); }
+.draw-check circle, .draw-check path { stroke: var(--zc, var(--good)); }
+.empty-state svg { color: var(--good); opacity: 0.5; }
+
+/* Week tile: quiet — a white card that whispers, chevron carries the affordance */
+.week-tile {
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--hair);
+  box-shadow: var(--elev-1);
+}
+.week-tile:hover { box-shadow: var(--elev-2); transform: translateY(-1px); }
+.week-tile .ic-svg { color: var(--muted); }
+.wt-num { font-size: 24px; font-weight: 700; }
+.wt-label { color: var(--muted); font-weight: 600; }
+
+/* ================================================================================
+   PALETTE V5 — CORAL SIGNATURE (research direction A, approved).
+   One hero hue: coral #F0455A. Text-safe coral #C22A3E for small text (AA ~5.8:1
+   on white). Semantic red/amber/green and zone hues untouched. Appended last.
+   ================================================================================ */
+
+:root {
+  --ground: #f6f6f4;               /* zinc-warm — surfaces still float */
+  --paper: #f6f6f4;
+  --surface-2: #f4f4f2;
+  --hair: #e9e9e6;
+  --accent: #f0455a;               /* the hero */
+  --accent-d: #c22a3e;             /* text-safe / hover-dark */
+  --accent-tint: #fde8eb;
+  --basil: var(--accent);
+  --basil-d: var(--accent-d);
+  --basil-tint: var(--accent-tint);
+}
+
+/* Primary buttons: coral, dark-coral hover */
+button.primary {
+  background: linear-gradient(180deg, #f4596c, #f0455a 55%, #dd3c50);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28), 0 1px 2px var(--key), 0 4px 12px rgba(240, 69, 90, 0.35);
+}
+button.primary:hover {
+  background: linear-gradient(180deg, #e8485c, #d63850);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.28), 0 2px 4px var(--key), 0 8px 18px rgba(240, 69, 90, 0.4);
+}
+button.primary.cooked { background: var(--good-d); }
+
+/* Active / selected states: coral */
+.drawer-item.on { background: var(--accent-tint); color: var(--accent-d); }
+.chips button.on {
+  background: var(--accent-d); border-color: var(--accent-d); color: #fff;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 2px 6px rgba(194, 42, 62, 0.3);
+}
+.ticker { color: var(--accent-d); }
+.lrow.done .checkoff .ring { background: var(--accent-d); border-color: var(--accent-d); }
+.menu-dot { background: var(--accent); }
+.seg button.on { color: var(--ink); }
+
+/* Week tile: quiet card + faint coral atmosphere, coral numeral */
+.week-tile {
+  background:
+    radial-gradient(120% 180% at 0% 0%, rgba(240, 69, 90, 0.07), transparent 55%),
+    var(--surface);
+}
+.wt-num { color: var(--accent-d); }
+
+/* Logo badge follows --basil -> coral automatically; keep its shadow warm */
+.logo-badge { box-shadow: 0 1px 2px var(--key), 0 4px 12px rgba(240, 69, 90, 0.35); }
+
+/* Danger stays crimson and reads distinct from the pinker coral hero */
+.danger-link { border-color: #fbd5d5; color: #dc2626; }
+.toast.error { background: #dc2626; }
+
+/* Ground darkened a step so white surfaces pop harder (same zinc-warm family). */
+:root {
+  --ground: #e9e9e6;
+  --paper: #e9e9e6;
+  --surface-2: #f0f0ed;
+  --hair: #dededa;
+  --key: rgba(20, 22, 25, 0.11);
+  --ambient: rgba(20, 22, 25, 0.08);
+}
+nav.tabbar { background: rgba(255, 255, 255, 0.94); }
+#menu-btn { border-color: rgba(20,22,25,0.06); }
+
+/* Ground: one more step down (visibly gray; cards read fully raised). */
+:root {
+  --ground: #dfdfdb;
+  --paper: #dfdfdb;
+  --surface-2: #ecece8;
+  --hair: #d3d3ce;
+}
+
+/* Muted nudged darker to hold AA on the deeper ground */
+:root { --muted: #565b61; }
+
+/* Imported-ingredient raw hint */
+.ing-raw { font-size: 11.5px; color: var(--muted); margin: -2px 0 8px 2px; }
+.ing-wrap { margin: 2px 0; }
+
+/* iOS standalone: keep the header clear of the notch/status bar */
+header.topbar { padding-top: calc(14px + env(safe-area-inset-top)); }
+
+/* Kitchen-pass video capture (Add tab) */
+.capture-btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; min-height: 48px;
+  background: var(--surface-2); border: 1.5px dashed var(--hair); border-radius: 14px;
+  color: var(--ink); font-weight: 600; cursor: pointer;
+  transition: background 0.14s ease, border-color 0.14s ease;
+}
+.capture-btn:hover { background: #ececec; border-color: var(--accent); }
+.captures { margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
+.caprow {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--surface); border: 1px solid var(--hair); border-radius: 12px;
+  padding: 8px 12px; box-shadow: var(--elev-1);
+}
+.cap-ic { color: var(--z-recipes); flex: none; }
+.cap-body { flex: 1; min-width: 0; }
+.cap-name { font-weight: 600; font-size: 14px; }
+.cap-meta { font-size: 12px; color: var(--muted); margin-top: 1px; }
+.cap-del { min-height: 40px; padding: 6px 12px; }
+
+/* Kitchen-pass review (narration P1) */
+.rv-transcript { margin: 4px 0 10px; font-size: 13px; }
+.rv-transcript summary { cursor: pointer; color: var(--muted); font-weight: 600; }
+.rv-transcript p { margin: 6px 0 0; color: var(--ink); }
+.rvrow { display: flex; gap: 10px; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid var(--hair); }
+.rv-keep { flex: none; padding-top: 2px; }
+.rv-check { width: 22px; height: 22px; min-height: 0; }
+.rv-body { flex: 1; min-width: 0; }
+.rv-utt { font-weight: 600; font-size: 14px; }
+.rv-controls { display: flex; gap: 8px; align-items: center; margin-top: 6px; flex-wrap: wrap; }
+.rv-name { font-weight: 700; }
+.rv-pick { flex: 1; min-width: 140px; }
+.rv-count { width: 80px; }
+.rv-bucket { width: 110px; }
+.rv-intent { font-size: 12px; color: var(--muted); }
+#overlay-root textarea { width: 100%; margin: 4px 0; }

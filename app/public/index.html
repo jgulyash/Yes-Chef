@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Yes Chef!</title>
+    <link rel="stylesheet" href="/style.css" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <meta name="theme-color" content="#F0455A" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Yes Chef" />
+  </head>
+  <body>
+    <div id="app">
+      <header class="topbar">
+        <button id="menu-btn" aria-label="Menu" aria-expanded="false">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+          <span class="menu-dot" id="menu-dot" hidden></span>
+        </button>
+        <div class="brand">
+          <span class="logo-badge" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M7 11c-2 0-3.2-1.5-3.2-3.2C3.8 6 5 4.8 6.6 4.8c.3-1.6 1.7-2.8 3.4-2.8 1.3 0 2.4.7 3 1.7.5-.3 1-.4 1.6-.4 1.7 0 3.1 1.3 3.3 3 1.3.3 2.3 1.5 2.3 2.9 0 1.6-1.3 2.8-2.9 2.8H7z" fill="#fff"/><rect x="7" y="12" width="10" height="8" rx="1.5" fill="#fff"/><path d="M9.5 16.2l1.6 1.6 3.4-3.4" stroke="#F0455A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          <div>
+            <h1>Yes Chef!</h1>
+            <div class="sub" id="brand-sub">Your kitchen</div>
+          </div>
+        </div>
+      </header>
+
+      <main id="panel" aria-live="polite"></main>
+
+      <nav id="drawer" aria-label="Main">
+        <div class="drawer-head">
+          <span class="drawer-title">Yes Chef!</span>
+          <button id="drawer-close" aria-label="Close menu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+        </div>
+        <button class="drawer-item on" data-tab="kitchen"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7.5L21 11"/><path d="M5.5 9.5V20h13V9.5"/><path d="M10 20v-5h4v5"/></svg>Kitchen</button>
+        <button class="drawer-item" data-tab="list"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="14" height="16" rx="2"/><path d="M9 3.5h6v3H9z"/><path d="M9 13l2 2 4-4.5"/></svg>This week's list</button>
+        <button class="drawer-item" data-tab="add"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Add groceries<span class="tab-badge" id="add-badge" hidden></span></button>
+        <button class="drawer-item" data-tab="stats"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 20v-8M12 20V5M19 20v-5"/></svg>Report card</button>
+      </nav>
+      <div id="drawer-backdrop" hidden></div>
+    </div>
+
+    <div id="sheet-root"></div>
+    <div id="overlay-root"></div>
+    <div id="toasts" aria-live="polite"></div>
+    <script src="/app.js"></script>
+    <script>
+      // PWA: register the service worker (no-op where unsupported).
+      if ("serviceWorker" in navigator && !location.search.includes("nosw")) navigator.serviceWorker.register("/sw.js").catch(() => {});
+    </script>
+  </body>
+</html>

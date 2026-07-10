@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Yes Chef! — interactive mockup v2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FBF6EE;--surface:#FFFFFF;--surface-2:#F6EFE4;--ink:#2B2723;--muted:#95897B;--hair:#ECE3D5;
+    --basil:#3E7D54;--basil-d:#2F6341;--basil-tint:#E6F0E9;
+    --paprika:#D85C34;--paprika-d:#B8481F;--paprika-tint:#FBEBE2;--sage:#5E8E6E;--sage-tint:#E7F0E7;
+    --amber:#E09A32;--amber-tint:#FBEFD8;--red:#C34532;--red-tint:#F7E2DC;
+    --z-pantry:#D99A3C;--z-fridge:#2F9C9C;--z-freezer:#5B9BD5;--z-deep:#5C6BC0;--z-counter:#A98B54;--z-recipe:#C05F8A;
+    --shadow:0 1px 2px rgba(43,39,35,.05),0 6px 20px rgba(43,39,35,.06);--shadow-lg:0 10px 40px rgba(43,39,35,.16);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;background:#EDE4D6;font-family:Inter,system-ui,sans-serif;color:var(--ink);display:flex;justify-content:center;padding:26px 0;min-height:100vh}
+  .device{width:414px;height:896px;background:var(--paper);border-radius:44px;position:relative;overflow:hidden;box-shadow:var(--shadow-lg),inset 0 0 0 9px #14110E,inset 0 0 0 11px #2c2620}
+  .notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:150px;height:26px;background:#14110E;border-radius:0 0 18px 18px;z-index:60}
+  .app{position:absolute;inset:11px;border-radius:34px;overflow:hidden;display:flex;flex-direction:column;background:var(--paper)}
+  .topbar{padding:34px 20px 10px;display:flex;align-items:center;justify-content:space-between;z-index:5}
+  .brand{display:flex;align-items:center;gap:10px}
+  .logo-badge{width:34px;height:34px;border-radius:11px;background:var(--basil);display:grid;place-items:center;box-shadow:var(--shadow);position:relative}
+  .logo-badge svg{width:22px;height:22px}
+  .brand h1{font-family:Fraunces;font-weight:600;font-size:22px;margin:0;letter-spacing:-.01em}
+  .brand h1 .bang{color:inherit}
+  .brand .sub{font-size:11px;color:var(--muted);margin-top:-2px}
+  .avatar{width:34px;height:34px;border-radius:50%;background:var(--paprika-tint);color:var(--paprika-d);display:grid;place-items:center;font-weight:700;font-size:13px}
+  .body{flex:1;overflow-y:auto;padding:4px 16px 100px}.body::-webkit-scrollbar{display:none}
+  .screen{display:none}.screen.active{display:block;animation:fade .22s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .h-title{font-family:Fraunces;font-weight:600;font-size:26px;margin:6px 2px 2px;letter-spacing:-.02em}
+  .h-sub{color:var(--muted);font-size:13px;margin:0 2px 14px;line-height:1.4}
+  .seg{display:flex;background:var(--surface-2);border-radius:12px;padding:4px;margin:0 0 16px;gap:4px}
+  .seg button{flex:1;border:0;background:transparent;font:inherit;font-size:13px;font-weight:600;color:var(--muted);padding:8px;border-radius:9px;cursor:pointer}
+  .seg button.on{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+  .summary{display:flex;gap:10px;margin:0 0 16px}
+  .stat{flex:1;background:var(--surface);border-radius:14px;padding:12px;box-shadow:var(--shadow)}
+  .stat .n{font-family:Fraunces;font-weight:600;font-size:22px;line-height:1}.stat .l{font-size:11px;color:var(--muted);margin-top:4px}
+  .group{margin-bottom:18px}
+  .group-head{display:flex;align-items:center;gap:8px;margin:0 2px 8px}
+  .slogo{width:20px;height:20px;border-radius:6px;object-fit:cover;background:var(--surface-2);flex:none}
+  .sdot{width:20px;height:20px;border-radius:6px;display:grid;place-items:center;color:#fff;font-size:10px;font-weight:800;flex:none}
+  .group-head .nm{font-weight:700;font-size:14px}.group-head .ct{color:var(--muted);font-size:12px;font-weight:600}
+  .group-head .badge{margin-left:auto;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+  .card{background:var(--surface);border-radius:16px;box-shadow:var(--shadow);overflow:hidden}
+  .row{display:flex;align-items:center;gap:12px;padding:13px 14px;border-bottom:1px solid var(--hair);cursor:pointer}
+  .row:last-child{border-bottom:0}
+  .check{width:24px;height:24px;border-radius:8px;border:2px solid var(--hair);flex:none;display:grid;place-items:center;color:transparent;font-size:14px;transition:.15s}
+  .row.done .check{background:var(--sage);border-color:var(--sage);color:#fff}
+  .row.done .r-name{text-decoration:line-through;color:var(--muted)}
+  .r-main{flex:1;min-width:0}.r-name{font-weight:600;font-size:14.5px;display:flex;align-items:center;gap:7px}
+  .r-need{font-size:12px;color:var(--muted);margin-top:2px}
+  .pill{font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;letter-spacing:.02em}
+  .pill.confirm{background:var(--amber-tint);color:#a9761a}.pill.high{background:var(--amber-tint);color:#a9761a}.pill.out{background:var(--red-tint);color:var(--red)}
+  .chev{color:#cdbfac;font-size:18px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .place{background:var(--surface);border-radius:18px;padding:15px;box-shadow:var(--shadow);cursor:pointer;overflow:hidden;min-height:104px;display:flex;flex-direction:column;justify-content:space-between}
+  .place .ptop{height:4px;border-radius:4px;width:38px;margin-bottom:10px}
+  .place .picon{font-size:26px;line-height:1}.place .pname{font-weight:700;font-size:15px;margin-top:8px}
+  .place .pmeta{font-size:11.5px;color:var(--muted);margin-top:2px;font-weight:500}
+  .place .pmeta.low{color:var(--amber)}.place .pmeta.good{color:var(--sage)}
+  .place.recipe{grid-column:1/-1;flex-direction:row;align-items:center;gap:14px;min-height:auto}
+  .place.wide{grid-column:1/-1;flex-direction:row;align-items:center;gap:14px;min-height:auto;background:var(--surface-2);box-shadow:none;border:1.5px dashed var(--hair)}
+  .backbar{display:flex;align-items:center;gap:10px;margin:2px 0 12px}
+  .back{width:34px;height:34px;border-radius:10px;background:var(--surface);box-shadow:var(--shadow);display:grid;place-items:center;cursor:pointer;font-size:17px;border:0;color:var(--ink)}
+  .backbar .bt{font-family:Fraunces;font-weight:600;font-size:20px}.backbar .bmeta{color:var(--muted);font-size:12px;margin-left:auto}
+  .item{background:var(--surface);border-radius:15px;box-shadow:var(--shadow);padding:12px 13px;margin-bottom:10px}
+  .item .itop{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+  .item .inm{font-weight:600;font-size:14.5px}.item .isz{font-size:11px;color:var(--muted)}
+  .item .flag{margin-left:auto;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px}
+  .flag.low{background:var(--amber-tint);color:#a9761a}.flag.out{background:var(--red-tint);color:var(--red)}.flag.ok{background:var(--sage-tint);color:var(--sage)}
+  .chips{display:flex;gap:6px}
+  .chip{flex:1;border:1.5px solid var(--hair);background:var(--surface);border-radius:10px;padding:8px 0;text-align:center;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer}
+  .chip.on{color:#fff}.chip.full.on{background:var(--sage);border-color:var(--sage)}.chip.half.on{background:var(--amber);border-color:var(--amber)}
+  .chip.low.on{background:#d98a2b;border-color:#d98a2b}.chip.out.on{background:var(--red);border-color:var(--red)}
+  .stepper{display:flex;align-items:center;background:var(--surface-2);border-radius:11px;overflow:hidden;width:fit-content}
+  .stepper button{width:42px;height:38px;border:0;background:transparent;font-size:20px;color:var(--paprika-d);cursor:pointer;font-weight:600}
+  .stepper .val{min-width:52px;text-align:center;font-weight:700;font-size:15px}
+  .step-row{display:flex;align-items:center;justify-content:space-between}
+  .step-row .out-btn{border:1.5px solid var(--hair);background:var(--surface);color:var(--red);font-weight:700;font-size:12px;padding:9px 14px;border-radius:10px;cursor:pointer}
+  .linecheck{position:sticky;bottom:8px;margin-top:6px;width:100%;background:var(--paprika);color:#fff;border:0;padding:15px;border-radius:15px;font:inherit;font-weight:700;font-size:15px;cursor:pointer;box-shadow:0 8px 22px rgba(216,92,52,.35)}
+  .linecheck .k{opacity:.85;font-weight:500;font-size:12px}
+  .empty{background:var(--surface-2);border:1.5px dashed var(--hair);border-radius:16px;padding:30px 20px;text-align:center;color:var(--muted)}
+  .empty .big{font-size:32px}.empty .t{font-weight:700;color:var(--ink);margin-top:8px}.empty .s{font-size:12px;margin-top:4px}
+  .empty button{margin-top:14px;border:0;background:var(--paprika);color:#fff;font:inherit;font-weight:700;padding:10px 16px;border-radius:11px;cursor:pointer}
+  .add-card{background:var(--surface);border-radius:18px;box-shadow:var(--shadow);padding:16px;margin-bottom:14px}
+  .add-card h3{margin:0 0 3px;font-size:15px;font-weight:700}.add-card p{margin:0 0 12px;font-size:12px;color:var(--muted)}
+  .add-head{display:flex;align-items:center;gap:10px;margin-bottom:2px}.add-head .ic{font-size:22px}
+  .input{width:100%;border:1.5px solid var(--hair);border-radius:12px;padding:12px;font:inherit;font-size:14px;background:var(--surface-2)}
+  textarea.input{resize:none;min-height:84px;font-family:ui-monospace,monospace;font-size:12.5px}
+  .lvl{display:flex;gap:6px;margin-top:9px}.lvl .chip{padding:8px 14px;flex:none}
+  .cam{width:100%;border:2px dashed #E0C9BC;background:var(--paprika-tint);border-radius:16px;padding:24px;text-align:center;cursor:pointer}
+  .cam .big{font-size:34px}.cam .t{font-weight:700;margin-top:6px;color:var(--paprika-d)}.cam .s{font-size:11.5px;color:#b07a63;margin-top:3px}
+  .soon{display:inline-block;margin-top:8px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:#efe0d8;color:#b07a63;padding:3px 8px;border-radius:20px}
+  .rec{background:var(--surface);border-radius:16px;box-shadow:var(--shadow);padding:14px;margin-bottom:11px;display:flex;gap:12px;align-items:center}
+  .rec .remoji{font-size:30px}.rec .rmain{flex:1}.rec .rt{font-weight:700;font-size:14.5px}.rec .rs{font-size:11.5px;color:var(--muted);margin-top:2px}
+  .rec .made{border:0;background:var(--sage);color:#fff;font:inherit;font-weight:700;font-size:12px;padding:9px 12px;border-radius:11px;cursor:pointer}
+  .rec .miss{border:0;background:var(--amber-tint);color:#a9761a;font:inherit;font-weight:700;font-size:12px;padding:9px 12px;border-radius:11px;cursor:pointer}
+  .meta-grid{display:flex;gap:10px;margin-top:14px}.meta-grid .m{flex:1;background:var(--surface);border-radius:12px;padding:11px;box-shadow:var(--shadow)}
+  .meta-grid .m .k{font-size:10.5px;color:var(--muted);font-weight:600}.meta-grid .m .v{font-weight:700;font-size:15px;margin-top:3px}
+  .scrim{position:absolute;inset:0;background:rgba(30,25,20,.4);z-index:70;display:none;align-items:flex-end}
+  .scrim.open{display:flex}
+  .sheet{background:var(--paper);width:100%;border-radius:26px 26px 0 0;padding:8px 18px 22px;max-height:88%;overflow-y:auto;box-shadow:var(--shadow-lg)}
+  .grab{width:40px;height:5px;border-radius:5px;background:#dcd0bf;margin:6px auto 14px}
+  .sheet .sh-top{display:flex;align-items:center;gap:10px}.sheet .sh-nm{font-family:Fraunces;font-weight:600;font-size:22px}
+  .zone-tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#fff;padding:3px 8px;border-radius:20px}
+  .level-bar{height:10px;border-radius:6px;background:var(--surface-2);overflow:hidden;margin:14px 0 4px}
+  .level-bar span{display:block;height:100%;background:linear-gradient(90deg,var(--amber),var(--paprika));transition:width .25s}
+  .field{margin-top:16px}.field label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+  .store-menu{background:var(--surface);border:1.5px solid var(--hair);border-radius:12px;margin-top:6px;overflow:hidden}
+  .store-opt{display:flex;align-items:center;gap:10px;padding:11px 12px;border-bottom:1px solid var(--hair);font-size:14px;cursor:pointer}
+  .store-opt:last-child{border-bottom:0}.store-opt.sel{background:var(--paprika-tint);font-weight:700}.store-opt.add{color:var(--paprika-d);font-weight:700}
+  .toast{position:absolute;left:50%;bottom:104px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:11px 16px;border-radius:12px;font-size:13px;font-weight:600;z-index:80;opacity:0;transition:.25s;pointer-events:none;box-shadow:var(--shadow-lg)}
+  .toast.show{opacity:1}
+  .tabbar{position:absolute;left:11px;right:11px;bottom:11px;height:74px;background:rgba(255,255,255,.9);backdrop-filter:blur(14px);border-top:1px solid var(--hair);display:flex;border-radius:0 0 34px 34px;z-index:40}
+  .tab{flex:1;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;color:var(--muted);font:inherit;padding-bottom:12px}
+  .tab .ti{font-size:20px;line-height:1}.tab .tl{font-size:10.5px;font-weight:600}.tab.on{color:var(--paprika)}
+</style>
+</head>
+<body>
+<div class="device"><div class="notch"></div><div class="app">
+  <div class="topbar"><div class="brand">
+    <div class="logo-badge"><svg viewBox="0 0 24 24" fill="none"><path d="M7 11c-2 0-3.2-1.5-3.2-3.2C3.8 6 5 4.8 6.6 4.8c.3-1.6 1.7-2.8 3.4-2.8 1.3 0 2.4.7 3 1.7.5-.3 1-.4 1.6-.4 1.7 0 3.1 1.3 3.3 3 1.3.3 2.3 1.5 2.3 2.9 0 1.6-1.3 2.8-2.9 2.8H7z" fill="#fff"/><rect x="7" y="12" width="10" height="8" rx="1.5" fill="#fff"/><path d="M9.5 16.2l1.6 1.6 3.4-3.4" stroke="#3E7D54" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div><h1>Yes Chef<span class="bang">!</span></h1><div class="sub">Our kitchen · Sunday</div></div>
+  </div><div class="avatar">J</div></div>
+
+  <div class="body">
+    <section class="screen active" id="list"></section>
+    <section class="screen" id="kitchen"></section>
+    <section class="screen" id="place"></section>
+    <section class="screen" id="recipes"></section>
+    <section class="screen" id="add"></section>
+    <section class="screen" id="stats"></section>
+  </div>
+
+  <div class="scrim" id="scrim"><div class="sheet" id="sheet"></div></div>
+  <div class="toast" id="toast"></div>
+
+  <div class="tabbar">
+    <button class="tab on" data-t="list"><span class="ti">📝</span><span class="tl">List</span></button>
+    <button class="tab" data-t="kitchen"><span class="ti">🏠</span><span class="tl">Kitchen</span></button>
+    <button class="tab" data-t="add"><span class="ti">➕</span><span class="tl">Add</span></button>
+    <button class="tab" data-t="stats"><span class="ti">📊</span><span class="tl">Stats</span></button>
+  </div>
+</div></div>
+
+<script>
+const ZONES={
+  pantry:{name:'Pantry',icon:'🥫',color:'var(--z-pantry)'},
+  fridge:{name:'Fridge',icon:'🧊',color:'var(--z-fridge)'},
+  freezer:{name:'Freezer',icon:'❄️',color:'var(--z-freezer)'},
+  deep:{name:'Deep Freezer',icon:'🧊',color:'var(--z-deep)'},
+  counter:{name:'Counter',icon:'🍌',color:'var(--z-counter)'},
+};
+let STORES=[
+  {id:'amazon',name:'Amazon',domain:'amazon.com',color:'#6C4BD8',kind:'online'},
+  {id:'club',name:'Warehouse club',domain:'example.com',color:'#5B7FA6',kind:'warehouse'},
+  {id:'market',name:'Grocery store',domain:'example.com',color:'#C25B5B',kind:'grocery'},
+  {id:'foods',name:'Natural foods store',domain:'example.com',color:'#4E7A3A',kind:'grocery'},
+  {id:'corner',name:'Corner market',domain:'example.com',color:'#B0713E',kind:'grocery'},
+];
+// discrete: {count,par,reorder}; bulk: {bucket:full|half|low|out}
+let id=0;
+let ITEMS=[
+  // FRIDGE
+  d('Skim Milk','fridge',null,{bucket:'out'},'market','','1 gal'),
+  c('Eggs','fridge',12,12,4,'market'),
+  c('Yogurt Pouches','fridge',8,8,3,'corner','',''),
+  c('Bread','fridge',6,6,2,'corner'),
+  c('Lemons','fridge',1,1,0,'corner'),
+  c('Apples','fridge',3,3,1,'foods'),
+  c('Strawberries','fridge',0,2,0.5,'corner','','2 ct'),
+  c('Raspberries','fridge',2,2,0.5,'corner'),
+  c('Blueberries','fridge',2,2,0.5,'foods'),
+  c('Organic Green Grapes','fridge',2,2,0.5,'club'),
+  c('Snack bars','fridge',8,8,3,'club'),
+  b('Cheddar cheese','fridge','low','corner'),
+  b('Butter','fridge','full','corner'),
+  b('Ketchup','fridge','full',''),
+  b('Raspberry Jelly','fridge','full',''),
+  b('Whipped Cream','fridge','full',''),
+  // FREEZER
+  c('Chicken breasts','freezer',4,4,2,'club'),
+  b('Frozen peas','freezer','full',''),
+  b('Frozen Mixed Vegetables','freezer','full','club'),
+  b('Mini Pancakes','freezer','full',''),
+  b('Frozen waffles','freezer','out','club'),
+  // PANTRY
+  b('K-cups','pantry','low','club'),
+  b('Cheerios','pantry','full',''),
+  b('Cereal','pantry','full',''),
+  b('Olive oil','pantry','full',''),
+  b('White rice','pantry','full',''),
+  b('All-purpose flour','pantry','full',''),
+  b('Sugar','pantry','full',''),
+  b('Pasta','pantry','full',''),
+  b('Rolled oats','pantry','full',''),
+  b('Salt','pantry','full',''),
+  b("Peanut butter",'pantry','low',''),
+  b('Maple syrup','pantry','full',''),
+  b('Honey','pantry','full',''),
+  b('Breakfast tea','pantry','low','amazon'),
+  b('Crackers','pantry','full',''),
+  c('Sweet Potatoes','pantry',4,4,1,''),
+  c('Fruit pouches','pantry',6,6,2,'club','',''),
+  // COUNTER
+  c('Bananas','counter',6,6,2,'market'),
+  c('Avocados','counter',4,4,1,'market'),
+];
+function c(name,zone,count,par,reorder,store,brand,size){return{id:++id,name,zone,discrete:true,count,par,reorder,storeId:store||null,brand:brand||'',size:size||''}}
+function b(name,zone,bucket,store,brand,size){return{id:++id,name,zone,discrete:false,bucket,storeId:store||null,brand:brand||'',size:size||''}}
+function d(name,zone,_,st,store,brand,size){return{id:++id,name,zone,discrete:false,bucket:st.bucket,storeId:store||null,brand:brand||'',size:size||''}}
+
+let listMode='store';
+
+// ---- helpers ----
+function storeById(sid){return STORES.find(s=>s.id===sid)}
+function isShort(it){return it.discrete?(it.count<=it.reorder):(it.bucket==='low'||it.bucket==='out')}
+function statusOf(it){
+  if(it.discrete){if(it.count<=it.reorder)return it.count<=0?'out':'low';return 'ok';}
+  return it.bucket==='out'?'out':it.bucket==='low'?'low':'ok';
+}
+function needText(it){
+  if(it.discrete){const q=Math.max(0,Math.ceil(it.par-it.count));return q>0?`${q} more · up to par ${it.par}`:'at par';}
+  return 'Restock to full + a backup';
+}
+function storeLogo(store,size){ // returns html
+  if(!store)return `<span class="sdot" style="background:#cdbfac">?</span>`;
+  const fav=`https://www.google.com/s2/favicons?domain=${store.domain}&sz=64`;
+  const mono=store.name[0];
+  return `<img class="slogo" src="${fav}" alt="" onerror="this.outerHTML='<span class=\\'sdot\\' style=\\'background:${store.color}\\'>${mono}</span>'">`;
+}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),1400);}
+
+// ---- LIST ----
+function renderList(){
+  const shorts=ITEMS.filter(isShort);
+  const out=shorts.filter(i=>statusOf(i)==='out').length, low=shorts.filter(i=>statusOf(i)==='low').length;
+  let groups={};
+  if(listMode==='store'){
+    shorts.forEach(i=>{const k=i.storeId||'__un';(groups[k]=groups[k]||[]).push(i);});
+  }else{
+    shorts.forEach(i=>{(groups[i.zone]=groups[i.zone]||[]).push(i);});
+  }
+  let html=`<div class="h-title">This week</div><p class="h-sub">${shorts.length} to reorder · tap ✓ as you order. Grouped by ${listMode==='store'?'store':'zone'}.</p>
+    <div class="summary"><div class="stat"><div class="n" style="color:var(--red)">${out}</div><div class="l">out</div></div>
+    <div class="stat"><div class="n" style="color:var(--amber)">${low}</div><div class="l">low</div></div>
+    <div class="stat"><div class="n" style="color:var(--sage)">${ITEMS.length}</div><div class="l">tracked</div></div></div>
+    <div class="seg"><button data-mode="store" class="${listMode==='store'?'on':''}">By store</button>
+    <button data-mode="zone" class="${listMode==='zone'?'on':''}">By zone</button></div>`;
+  const keys=Object.keys(groups).sort((a,b)=> a==='__un'?1:b==='__un'?-1:0);
+  keys.forEach(k=>{
+    let head, dotHtml, badge;
+    if(listMode==='store'){
+      if(k==='__un'){head='Unassigned';dotHtml=`<span class="sdot" style="background:#cdbfac">?</span>`;badge='pick a store';}
+      else{const s=storeById(k);head=s.name;dotHtml=storeLogo(s);badge=s.kind;}
+    }else{const z=ZONES[k];head=z.name;dotHtml=`<span class="sdot" style="background:${z.color}">${z.icon}</span>`;badge='zone';}
+    html+=`<div class="group"><div class="group-head">${dotHtml}<span class="nm">${head}</span><span class="ct">· ${groups[k].length}</span><span class="badge">${badge}</span></div><div class="card">`;
+    groups[k].forEach(i=>{
+      const st=statusOf(i);
+      html+=`<div class="row" data-item="${i.id}"><div class="check" data-check="${i.id}">✓</div>
+        <div class="r-main"><div class="r-name">${i.name} <span class="pill ${st}">${st}</span></div>
+        <div class="r-need">${needText(i)}</div></div><span class="chev">›</span></div>`;
+    });
+    html+=`</div></div>`;
+  });
+  document.getElementById('list').innerHTML=html;
+}
+
+// ---- KITCHEN ----
+function renderKitchen(){
+  let html=`<div class="h-title">Kitchen</div><p class="h-sub">Go to a place and look — just like real life.</p><div class="grid">`;
+  Object.keys(ZONES).forEach(z=>{
+    const items=ITEMS.filter(i=>i.zone===z);
+    const lows=items.filter(isShort).length;
+    let meta,cls='';
+    if(items.length===0){meta='Empty · tap to set up';}
+    else if(lows>0){meta=`${items.length} items · ${lows} to reorder`;cls='low';}
+    else{meta=`${items.length} items · stocked`;cls='good';}
+    html+=`<div class="place" data-zone="${z}"><div><div class="ptop" style="background:${ZONES[z].color}"></div><div class="picon">${ZONES[z].icon}</div></div>
+      <div><div class="pname">${ZONES[z].name}</div><div class="pmeta ${cls}">${meta}</div></div></div>`;
+  });
+  html+=`<div class="place" data-goto="recipes"><div><div class="ptop" style="background:var(--z-recipe)"></div><div class="picon">📖</div></div>
+    <div><div class="pname">Recipes</div><div class="pmeta">6 saved · 4 ready</div></div></div>
+    <div class="place wide" data-zone="fridge"><div class="picon">➕</div><div style="flex:1"><div class="pname">Line Check</div>
+    <div class="pmeta">Walk one place, confirm every item — 60 seconds</div></div><span class="chev">›</span></div></div>`;
+  document.getElementById('kitchen').innerHTML=html;
+}
+
+// ---- PLACE ----
+let currentZone='fridge';
+function renderPlace(z){
+  currentZone=z; const items=ITEMS.filter(i=>i.zone===z);
+  const lows=items.filter(isShort).length;
+  let html=`<div class="backbar"><button class="back" data-goto="kitchen">‹</button><span class="bt">${ZONES[z].name}</span>
+    <span class="bmeta">${items.length} items${lows?` · ${lows} to reorder`:''}</span></div>`;
+  if(items.length===0){
+    html+=`<div class="empty"><div class="big">${ZONES[z].icon}</div><div class="t">Nothing here yet</div>
+      <div class="s">Add items to your ${ZONES[z].name.toLowerCase()} to start tracking them.</div>
+      <button data-goto="add">Add an item</button></div>`;
+    document.getElementById('place').innerHTML=html; return;
+  }
+  // low first
+  items.sort((a,b)=>(isShort(b)?1:0)-(isShort(a)?1:0));
+  items.forEach(i=>{
+    const st=statusOf(i);
+    const flag=st==='out'?'<span class="flag out">out</span>':st==='low'?'<span class="flag low">low</span>':'<span class="flag ok">at par</span>';
+    const sz=[i.size,i.storeId?storeById(i.storeId).name:''].filter(Boolean).join(' · ');
+    html+=`<div class="item"><div class="itop"><span class="inm">${i.name}</span>${sz?`<span class="isz">· ${sz}</span>`:''}${flag}</div>`;
+    if(i.discrete){
+      html+=`<div class="step-row"><div class="stepper"><button data-dec="${i.id}">−</button><span class="val" id="val-${i.id}">${i.count}</span><button data-inc="${i.id}">+</button></div>
+        <span class="isz">par ${i.par}${i.reorder%1?` · reorder at ½`:''}</span></div>`;
+    }else{
+      html+=`<div class="chips">${['full','half','low','out'].map(lv=>`<div class="chip ${lv} ${i.bucket===lv?'on':''}" data-bucket="${i.id}" data-lv="${lv}">${lv[0].toUpperCase()+lv.slice(1)}</div>`).join('')}</div>`;
+    }
+    html+=`</div>`;
+  });
+  html+=`<button class="linecheck" data-linecheck="1">Start ${ZONES[z].name} Line Check <span class="k">· ${items.length} items, ~1 min</span></button>`;
+  document.getElementById('place').innerHTML=html;
+}
+
+// ---- RECIPES ----
+function renderRecipes(){
+  const R=[['🍝','Weeknight pasta','Ready · pasta, tomatoes, olive oil, cheddar','made'],
+    ['🥞','Protein pancakes','Ready · mix, eggs, skim milk, syrup','made'],
+    ['🌯','Chicken & rice bowls','Ready · chicken, rice, mixed veg','made'],
+    ['🥗','Berry yogurt bowls','Missing 1 · strawberries (out)','miss'],
+    ['🍞','PB&J lunchboxes',"Ready · bread, peanut butter, raspberry jelly",'made']];
+  let html=`<div class="backbar"><button class="back" data-goto="kitchen">‹</button><span class="bt">Recipes</span><span class="bmeta">6 saved</span></div>
+    <p class="h-sub">Tap “I made this” and Yes Chef depletes the ingredients for you.</p>`;
+  R.forEach(r=>html+=`<div class="rec"><span class="remoji">${r[0]}</span><div class="rmain"><div class="rt">${r[1]}</div><div class="rs">${r[2]}</div></div>
+    <button class="${r[3]}" data-recipe="${r[1]}">${r[3]==='made'?'I made this':'Add missing'}</button></div>`);
+  html+=`<div class="rec" style="background:var(--surface-2);box-shadow:none;justify-content:center;border:1.5px dashed var(--hair)"><span style="color:var(--paprika-d);font-weight:700">＋ Add a recipe</span></div>`;
+  document.getElementById('recipes').innerHTML=html;
+}
+
+// ---- ADD ----
+function renderAdd(){
+  document.getElementById('add').innerHTML=`<div class="h-title">Add</div><p class="h-sub">Three ways to tell Yes Chef what changed.</p>
+    <div class="add-card"><div class="add-head"><span class="ic">⚡</span><h3>Quick-add</h3></div><p>Noticed something's low? Type it — resolves through your aliases.</p>
+    <input class="input" placeholder="e.g. out of olive oil"><div class="lvl"><div class="chip low on" style="flex:none;padding:8px 14px">Low</div><div class="chip out" style="flex:none;padding:8px 14px">Out</div></div></div>
+    <div class="add-card"><div class="add-head"><span class="ic">🧾</span><h3>Paste a receipt</h3></div><p>One item per line. Refunds aren't credited (the anti-over-order rule).</p>
+    <textarea class="input" placeholder="2 large eggs&#10;1 skim milk&#10;1 frozen waffles #substituted"></textarea></div>
+    <div class="add-card"><div class="add-head"><span class="ic">📹</span><h3>Record a kitchen pass</h3></div><p>Open your camera, pan across a shelf, and Yes Chef will read levels from it.</p>
+    <div class="cam"><div class="big">📷</div><div class="t">Tap to record or upload</div><div class="s">Launches your phone camera · uploads to your NAS</div><div class="soon">Capture now · AI reading soon</div></div></div>`;
+}
+function renderStats(){
+  document.getElementById('stats').innerHTML=`<div class="h-title">Is it working?</div><p class="h-sub">Trust the list when precision &amp; recall are high, effort is low.</p>
+    <div class="meta-grid"><div class="m"><div class="k">Precision</div><div class="v" style="color:var(--sage)">92%</div></div>
+    <div class="m"><div class="k">Recall</div><div class="v" style="color:var(--sage)">96%</div></div>
+    <div class="m"><div class="k">Upkeep</div><div class="v">4<span style="font-size:11px;color:var(--muted)">min/wk</span></div></div></div>
+    <div class="add-card" style="margin-top:14px"><div class="add-head"><span class="ic">📈</span><h3>This month</h3></div>
+    <p>1 missed run-out · 3 false alarms dismissed · ${ITEMS.length} items tracked across ${STORES.length} stores.</p></div>`;
+}
+
+// ---- ITEM SHEET ----
+let sheetItemId=null;
+function openSheet(itemId){
+  sheetItemId=itemId; const i=ITEMS.find(x=>x.id===itemId); const z=ZONES[i.zone];
+  const st=statusOf(i);
+  const pct=i.discrete?Math.max(4,Math.min(100,Math.round(i.count/(i.par||1)*100))):({full:100,half:50,low:22,out:6})[i.bucket];
+  let ctrl;
+  if(i.discrete){
+    ctrl=`<div class="step-row" style="margin-top:16px"><div class="stepper"><button data-dec="${i.id}" data-sheet="1">−</button><span class="val" id="sval-${i.id}">${i.count}</span><button data-inc="${i.id}" data-sheet="1">+</button></div><span class="isz">par ${i.par}${i.reorder%1?' · reorder at ½':` · reorder at ${i.reorder}`}</span></div>`;
+  }else{
+    ctrl=`<div class="chips" style="margin-top:16px">${['full','half','low','out'].map(lv=>`<div class="chip ${lv} ${i.bucket===lv?'on':''}" data-bucket="${i.id}" data-lv="${lv}" data-sheet="1">${lv[0].toUpperCase()+lv.slice(1)}</div>`).join('')}</div>`;
+  }
+  let stores=`<div class="store-opt add" data-addstore="1">＋ Add new store…</div>`;
+  STORES.forEach(s=>{stores+=`<div class="store-opt ${i.storeId===s.id?'sel':''}" data-setstore="${s.id}">${storeLogo(s)} ${s.name} ${i.storeId===s.id?'✓':''}</div>`;});
+  stores+=`<div class="store-opt ${!i.storeId?'sel':''}" data-setstore="">${`<span class="sdot" style="background:#cdbfac">?</span>`} Unassigned ${!i.storeId?'✓':''}</div>`;
+  document.getElementById('sheet').innerHTML=`<div class="grab"></div>
+    <div class="sh-top"><span class="sh-nm">${i.name}</span><span class="zone-tag" style="background:${z.color}">${z.name}</span></div>
+    <div style="font-size:12px;color:var(--muted);margin-top:4px">Estimated: ${i.discrete?i.count+' on hand':i.bucket} · updated recently</div>
+    <div class="level-bar"><span style="width:${pct}%"></span></div>
+    <div style="font-size:11px;color:var(--muted)">estimate — never asserted as truth</div>
+    ${ctrl}
+    <div class="field"><label>Store</label><div class="store-menu">${stores}</div></div>
+    <div class="meta-grid"><div class="m"><div class="k">Brand</div><div class="v" style="font-size:13px">${i.brand||'—'}</div></div>
+    <div class="m"><div class="k">Size</div><div class="v" style="font-size:13px">${i.size||'—'}</div></div>
+    <div class="m"><div class="k">Status</div><div class="v" style="font-size:13px;color:${st==='ok'?'var(--sage)':st==='out'?'var(--red)':'var(--amber)'}">${st==='ok'?'at par':st}</div></div></div>
+    <button class="linecheck" style="position:static;margin-top:18px;box-shadow:none;background:var(--ink)" data-closesheet="1">Done</button>`;
+  document.getElementById('scrim').classList.add('open');
+}
+function closeSheet(){document.getElementById('scrim').classList.remove('open');sheetItemId=null;}
+
+// ---- navigation ----
+function go(id){
+  ['list','kitchen','place','recipes','add','stats'].forEach(s=>document.getElementById(s).classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const tabFor=(id==='place'||id==='recipes')?'kitchen':id;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.dataset.t===tabFor));
+  document.querySelector('.body').scrollTop=0;
+  if(id==='list')renderList(); if(id==='kitchen')renderKitchen(); if(id==='add')renderAdd(); if(id==='stats')renderStats(); if(id==='recipes')renderRecipes();
+}
+
+// ---- events (delegation) ----
+document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>go(t.dataset.t)));
+document.body.addEventListener('click',e=>{
+  const el=e.target.closest('[data-goto],[data-zone],[data-mode],[data-item],[data-check],[data-inc],[data-dec],[data-bucket],[data-setstore],[data-addstore],[data-closesheet],[data-linecheck],[data-recipe]');
+  if(!el)return;
+  if(el.dataset.check!==undefined){e.stopPropagation();el.closest('.row').classList.toggle('done');return;}
+  if(el.dataset.goto){go(el.dataset.goto);return;}
+  if(el.dataset.zone!==undefined){renderPlace(el.dataset.zone);go('place');return;}
+  if(el.dataset.mode){listMode=el.dataset.mode;renderList();return;}
+  if(el.dataset.item){openSheet(+el.dataset.item);return;}
+  if(el.dataset.inc){const i=ITEMS.find(x=>x.id==el.dataset.inc);i.count++;afterStateChange(i,el);return;}
+  if(el.dataset.dec){const i=ITEMS.find(x=>x.id==el.dataset.dec);i.count=Math.max(0,i.count-1);afterStateChange(i,el);return;}
+  if(el.dataset.bucket){const i=ITEMS.find(x=>x.id==el.dataset.bucket);i.bucket=el.dataset.lv;afterStateChange(i,el);return;}
+  if(el.dataset.setstore!==undefined){const i=ITEMS.find(x=>x.id===sheetItemId);i.storeId=el.dataset.setstore||null;toast(i.storeId?`Store set to ${storeById(i.storeId).name}`:'Store cleared');openSheet(sheetItemId);return;}
+  if(el.dataset.addstore){const n=prompt('New store name (e.g. Target):');if(n){const nid=n.toLowerCase().replace(/[^a-z]/g,'')||('s'+Date.now());STORES.push({id:nid,name:n,domain:n.toLowerCase().replace(/[^a-z]/g,'')+'.com',color:'#8a7',kind:'grocery'});const i=ITEMS.find(x=>x.id===sheetItemId);i.storeId=nid;toast(`Added ${n}`);openSheet(sheetItemId);}return;}
+  if(el.dataset.closesheet){closeSheet();return;}
+  if(el.dataset.linecheck){toast('Line Check — walk the '+ZONES[currentZone].name+' 👀');return;}
+  if(el.dataset.recipe){toast('“'+el.dataset.recipe+'” — ingredients depleted ✓');return;}
+});
+document.getElementById('scrim').addEventListener('click',e=>{if(e.target.id==='scrim')closeSheet();});
+
+function afterStateChange(i,el){
+  const inSheet=el.dataset.sheet;
+  if(i.discrete){document.querySelectorAll('#val-'+i.id+',#sval-'+i.id).forEach(v=>v.textContent=i.count);}
+  if(inSheet){openSheet(i.id);} else if(!i.discrete){renderPlace(currentZone);}  // re-render chips in place
+}
+renderList();
+</script>
+</body>
+</html>

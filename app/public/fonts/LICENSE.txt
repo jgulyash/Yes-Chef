@@ -1,0 +1,7 @@
+Inter (inter-var.woff2) — Copyright 2016 The Inter Project Authors (https://github.com/rsms/inter)
+Manrope (manrope-var.woff2) — Copyright 2019 The Manrope Project Authors (https://github.com/sharanda/manrope)
+
+Both fonts are licensed under the SIL Open Font License, Version 1.1.
+The full license text is available at: https://openfontlicense.org
+and in each font's upstream repository. The fonts are redistributed here
+unmodified, self-hosted so the app makes no CDN requests.

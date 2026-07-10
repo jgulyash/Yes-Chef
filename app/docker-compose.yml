@@ -1,0 +1,35 @@
+# Yes Chef! Stage-1 — Synology Container Manager project file.
+#
+# This builds the image from the Dockerfile and runs one container. The database is kept
+# on a folder you mount from the NAS (the "volumes" line) so it persists across restarts
+# and is picked up by your normal NAS backups/snapshots.
+
+services:
+  yeschef:
+    build: .
+    image: yeschef:latest
+    container_name: yeschef
+    ports:
+      # host:container — open http://<your-NAS-IP>:3000 to use the app.
+      - "3000:3000"
+    volumes:
+      # Left side = a folder on the NAS; right side = the path inside the container.
+      # Everything Yes Chef! remembers lives in ./db (the SQLite file).
+      - ./db:/data
+      # Recorded kitchen-pass videos live on their own volume (big files, kept off the
+      # DB backup path). Create the ./media folder on the NAS before first start —
+      # Synology does not auto-create bind-mount folders.
+      - ./media:/media
+      # Whisper speech-to-text model (~465MB), mounted read-only so image rebuilds
+      # never re-ship it. Create ./models on the NAS and place ggml-small.en.bin in it
+      # ONCE (same auto-create caveat as db/media). If the file is absent the app
+      # still runs — narration falls back to the paste-transcript path.
+      - ./models:/models:ro
+    environment:
+      - PORT=3000
+      - YESCHEF_DB=/data/yeschef.db
+      - YESCHEF_MEDIA=/media
+      - YESCHEF_WHISPER_MODEL=/models/ggml-small.en.bin
+    # Restart automatically if it crashes or the NAS reboots — except when you stop it
+    # yourself on purpose.
+    restart: unless-stopped

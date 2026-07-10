@@ -1,0 +1,29 @@
+{
+  "name": "yes-chef-stage1",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Yes Chef! Stage-1 MVP \u2014 the cheap loop: receipts + quick-add + predicted depletion -> a weekly shortfall list.",
+  "type": "module",
+  "scripts": {
+    "migrate": "NODE_OPTIONS=--disable-warning=ExperimentalWarning tsx src/migrate.ts",
+    "seed": "NODE_OPTIONS=--disable-warning=ExperimentalWarning tsx src/seed.ts",
+    "demo": "NODE_OPTIONS=--disable-warning=ExperimentalWarning tsx src/demo.ts",
+    "dev": "NODE_OPTIONS=--disable-warning=ExperimentalWarning tsx watch src/server.ts",
+    "start": "NODE_OPTIONS=--disable-warning=ExperimentalWarning tsx src/server.ts",
+    "build": "tsc -p tsconfig.build.json",
+    "bootstrap:prod": "NODE_OPTIONS=--disable-warning=ExperimentalWarning node dist/bootstrap.js",
+    "start:prod": "NODE_OPTIONS=--disable-warning=ExperimentalWarning node dist/server.js",
+    "test": "NODE_OPTIONS=--disable-warning=ExperimentalWarning vitest run"
+  },
+  "dependencies": {
+    "@fastify/multipart": "^8.3.0",
+    "@fastify/static": "^7.0.4",
+    "fastify": "^4.28.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.5.4",
+    "vitest": "^2.0.5"
+  }
+}

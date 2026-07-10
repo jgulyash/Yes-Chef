@@ -1,0 +1,411 @@
+{
+  "$schema-notes": "Your staple list \u2014 this is YOUR data, edit it freely. One object per food item. Fields: name (what you call it); zone (frozen | refrigerated | counter | pantry); is_discrete (true = you count whole units like eggs/cans; false = you eyeball a level for jars/bags/bottles); par (target you like to keep on hand \u2014 a count for discrete items, leave at 1 for bulk); reorder_point (when to reorder \u2014 for discrete, reorder when count is at or below this; for bulk leave at 0, the bucket level drives it); consumption_rate (rough usage per day: for discrete, units/day, e.g. 1.5 eggs/day; for bulk, fraction of a container/day, e.g. 0.2 means a container lasts ~5 days); init (starting state: a number for discrete, or full/half/low/out for bulk); aliases (other names you or receipts use for it \u2014 the canonical name is added automatically). NOTE: these seed the database only on first run, so set them before you first deploy.",
+  "staples": [
+    {
+      "name": "Eggs",
+      "zone": "refrigerated",
+      "is_discrete": true,
+      "par": 12,
+      "reorder_point": 4,
+      "consumption_rate": 1.5,
+      "init": 12,
+      "aliases": [
+        "egg",
+        "large eggs",
+        "dozen eggs"
+      ]
+    },
+    {
+      "name": "Bananas",
+      "zone": "counter",
+      "is_discrete": true,
+      "par": 6,
+      "reorder_point": 2,
+      "consumption_rate": 0.8,
+      "init": 6,
+      "aliases": [
+        "banana"
+      ]
+    },
+    {
+      "name": "Apples",
+      "zone": "refrigerated",
+      "is_discrete": true,
+      "par": 6,
+      "reorder_point": 2,
+      "consumption_rate": 0.5,
+      "init": 6,
+      "aliases": [
+        "apple",
+        "gala apples",
+        "fuji apples"
+      ]
+    },
+    {
+      "name": "Avocados",
+      "zone": "counter",
+      "is_discrete": true,
+      "par": 4,
+      "reorder_point": 1,
+      "consumption_rate": 0.4,
+      "init": 4,
+      "aliases": [
+        "avocado",
+        "hass avocado"
+      ]
+    },
+    {
+      "name": "Yogurt cups",
+      "zone": "refrigerated",
+      "is_discrete": true,
+      "par": 8,
+      "reorder_point": 3,
+      "consumption_rate": 1.0,
+      "init": 8,
+      "aliases": [
+        "yogurt",
+        "greek yogurt",
+        "yoghurt"
+      ]
+    },
+    {
+      "name": "Chicken breasts",
+      "zone": "frozen",
+      "is_discrete": true,
+      "par": 6,
+      "reorder_point": 2,
+      "consumption_rate": 0.7,
+      "init": 6,
+      "aliases": [
+        "chicken breast",
+        "chicken",
+        "boneless chicken breast"
+      ]
+    },
+    {
+      "name": "Canned black beans",
+      "zone": "pantry",
+      "is_discrete": true,
+      "par": 4,
+      "reorder_point": 1,
+      "consumption_rate": 0.2,
+      "init": 4,
+      "aliases": [
+        "black beans",
+        "canned beans",
+        "beans"
+      ]
+    },
+    {
+      "name": "Canned diced tomatoes",
+      "zone": "pantry",
+      "is_discrete": true,
+      "par": 4,
+      "reorder_point": 1,
+      "consumption_rate": 0.2,
+      "init": 4,
+      "aliases": [
+        "diced tomatoes",
+        "canned tomatoes",
+        "tomatoes"
+      ]
+    },
+    {
+      "name": "Bread",
+      "zone": "counter",
+      "is_discrete": true,
+      "par": 2,
+      "reorder_point": 1,
+      "consumption_rate": 0.15,
+      "init": 2,
+      "aliases": [
+        "loaf of bread",
+        "sandwich bread",
+        "whole wheat bread"
+      ]
+    },
+    {
+      "name": "Lemons",
+      "zone": "refrigerated",
+      "is_discrete": true,
+      "par": 4,
+      "reorder_point": 1,
+      "consumption_rate": 0.3,
+      "init": 4,
+      "aliases": [
+        "lemon"
+      ]
+    },
+    {
+      "name": "Onions",
+      "zone": "pantry",
+      "is_discrete": true,
+      "par": 5,
+      "reorder_point": 2,
+      "consumption_rate": 0.4,
+      "init": 5,
+      "aliases": [
+        "onion",
+        "yellow onion",
+        "yellow onions"
+      ]
+    },
+    {
+      "name": "Bell peppers",
+      "zone": "refrigerated",
+      "is_discrete": true,
+      "par": 4,
+      "reorder_point": 1,
+      "consumption_rate": 0.3,
+      "init": 4,
+      "aliases": [
+        "bell pepper",
+        "red pepper",
+        "green pepper"
+      ]
+    },
+    {
+      "name": "Whole milk",
+      "zone": "refrigerated",
+      "is_discrete": false,
+      "par": 1,
+      "reorder_point": 0,
+      "consumption_rate": 0.2,
+      "init": "full",
+      "aliases": [
+        "milk",
+        "whl milk",
+        "whole milk gallon"
+      ]
+    },
+    {
+      "name": "Olive oil",
+      "zone": "pantry",
+      "is_discrete": false,
+      "par": 1,
+      "reorder_point": 0,
+      "consumption_rate": 0.03,
+      "init": "full",
+      "aliases": [
+        "evoo",
+        "extra virgin olive oil",
+        "cooking oil"
+      ]
+    },
+    {
+      "name": "White rice",
+      "zone": "pantry",
+      "is_discrete": false,
+      "par": 1,
+      "reorder_point": 0,
+      "consumption_rate": 0.04,
+      "init": "full",
+      "aliases": [
+        "rice",
+        "long grain rice",
+        "jasmine rice"
+      ]
+    },
+    {
+      "name": "All-purpose flour",
+      "zone": "pantry",
+      "is_discrete": false,
+      "par": 1,
+      "reorder_point": 0,
+      "consumption_rate": 0.02,
+      "init": "full",
+      "aliases": [
+        "flour",
+        "ap flour"
+      ]
+    },
+    {
+      "name": "Sugar",
+      "zone": "pantry",
+      "is_discrete": false,
+      "par": 1,
+      "reorder_point": 0,
+      "consumption_rate": 0.02,
+      "init": "full",
+      "aliases": [
+        "white sugar",
+        "granulated sugar"
+      ]
+    },
+    {
+      "name": "Coffee beans",
+      "zone": "pantry",
+      "is_discrete": false,
+      "par": 1,
+      "reorder_point": 0,
+      "consumption_rate": 0.07,
+      "init": "full",
+      "aliases": [
+        "coffee",
+        "ground coffee",
+        "whole bean coffee"
+      ]
+    },
+    {
+      "name": "Pasta",
+      "zone": "pantry",
+      "is_discrete": false,
+      "par": 1,
+      "reorder_point": 0,
+      "consumption_rate": 0.06,
+      "init": "full",
+      "aliases": [
+        "spaghetti",
+        "penne",
+        "noodles"
+      ]
+    },
+    {
+      "name": "Breakfast cereal",
+      "zone": "pantry",
+      "is_discrete": false,
+      "par": 1,
+      "reorder_point": 0,
+      "consumption_rate": 0.1,
+      "init": "full",
+      "aliases": [
+        "cereal",
+        "granola"
+      ]
+    },
+    {
+      "name": "Rolled oats",
+      "zone": "pantry",
+      "is_discrete": false,
+      "par": 1,
+      "reorder_point": 0,
+      "consumption_rate": 0.05,
+      "init": "full",
+      "aliases": [
+        "oats",
+        "oatmeal",
+        "old fashioned oats"
+      ]
+    },
+    {
+      "name": "Salt",
+      "zone": "pantry",
+      "is_discrete": false,
+      "par": 1,
+      "reorder_point": 0,
+      "consumption_rate": 0.005,
+      "init": "full",
+      "aliases": [
+        "table salt",
+        "kosher salt",
+        "sea salt"
+      ]
+    },
+    {
+      "name": "Peanut butter",
+      "zone": "pantry",
+      "is_discrete": false,
+      "par": 1,
+      "reorder_point": 0,
+      "consumption_rate": 0.04,
+      "init": "full",
+      "aliases": [
+        "pnt btr",
+        "peanutbutter"
+      ]
+    },
+    {
+      "name": "Ketchup",
+      "zone": "refrigerated",
+      "is_discrete": false,
+      "par": 1,
+      "reorder_point": 0,
+      "consumption_rate": 0.02,
+      "init": "full",
+      "aliases": [
+        "catsup",
+        "tomato ketchup"
+      ]
+    },
+    {
+      "name": "Orange juice",
+      "zone": "refrigerated",
+      "is_discrete": false,
+      "par": 1,
+      "reorder_point": 0,
+      "consumption_rate": 0.15,
+      "init": "full",
+      "aliases": [
+        "oj",
+        "orange juice carton"
+      ]
+    },
+    {
+      "name": "Butter",
+      "zone": "refrigerated",
+      "is_discrete": false,
+      "par": 1,
+      "reorder_point": 0,
+      "consumption_rate": 0.08,
+      "init": "full",
+      "aliases": [
+        "salted butter",
+        "unsalted butter",
+        "stick butter"
+      ]
+    },
+    {
+      "name": "Cheddar cheese",
+      "zone": "refrigerated",
+      "is_discrete": false,
+      "par": 1,
+      "reorder_point": 0,
+      "consumption_rate": 0.1,
+      "init": "full",
+      "aliases": [
+        "cheddar",
+        "cheese",
+        "sharp cheddar"
+      ]
+    },
+    {
+      "name": "Maple syrup",
+      "zone": "pantry",
+      "is_discrete": false,
+      "par": 1,
+      "reorder_point": 0,
+      "consumption_rate": 0.02,
+      "init": "full",
+      "aliases": [
+        "syrup",
+        "pancake syrup"
+      ]
+    },
+    {
+      "name": "Honey",
+      "zone": "pantry",
+      "is_discrete": false,
+      "par": 1,
+      "reorder_point": 0,
+      "consumption_rate": 0.01,
+      "init": "full",
+      "aliases": [
+        "raw honey"
+      ]
+    },
+    {
+      "name": "Frozen peas",
+      "zone": "frozen",
+      "is_discrete": false,
+      "par": 1,
+      "reorder_point": 0,
+      "consumption_rate": 0.05,
+      "init": "full",
+      "aliases": [
+        "peas",
+        "green peas",
+        "bag of peas"
+      ]
+    }
+  ]
+}

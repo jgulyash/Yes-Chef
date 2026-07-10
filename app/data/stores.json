@@ -1,0 +1,25 @@
+{
+  "$schema-notes": "Your stores \u2014 this is YOUR data, edit it freely (same idea as staples.json). Fields: name; kind (grocery | warehouse | online | other \u2014 drives icon/sort); order_method (in_store | pickup | delivery \u2014 optional, how you usually get it); url (optional, the store's site for a future order deep-link). Stores seed the database only on first run; after that, manage them in the app. Items with no store show under 'Unassigned'.",
+  "stores": [
+    {
+      "name": "Warehouse club",
+      "kind": "warehouse",
+      "order_method": "in_store"
+    },
+    {
+      "name": "Grocery store",
+      "kind": "grocery",
+      "order_method": "in_store"
+    },
+    {
+      "name": "Natural foods store",
+      "kind": "grocery",
+      "order_method": "in_store"
+    },
+    {
+      "name": "Online",
+      "kind": "online",
+      "order_method": "delivery"
+    }
+  ]
+}

@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Yes Chef! — UX mockup v1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FBF6EE; --surface:#FFFFFF; --surface-2:#F6EFE4;
+    --ink:#2B2723; --muted:#95897B; --hair:#ECE3D5;
+    --paprika:#D85C34; --paprika-d:#B8481F; --paprika-tint:#FBEBE2;
+    --sage:#5E8E6E; --sage-tint:#E7F0E7;
+    --amber:#E09A32; --amber-tint:#FBEFD8;
+    --red:#C34532; --red-tint:#F7E2DC;
+    --z-pantry:#D99A3C; --z-fridge:#2F9C9C; --z-freezer:#5B9BD5; --z-deep:#5C6BC0; --z-counter:#A98B54; --z-recipe:#C05F8A;
+    --shadow:0 1px 2px rgba(43,39,35,.05), 0 6px 20px rgba(43,39,35,.06);
+    --shadow-lg:0 10px 40px rgba(43,39,35,.16);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;background:#EDE4D6;font-family:Inter,system-ui,sans-serif;color:var(--ink);
+    display:flex;justify-content:center;padding:26px 0;min-height:100vh}
+  .device{width:414px;height:896px;background:var(--paper);border-radius:44px;position:relative;
+    overflow:hidden;box-shadow:var(--shadow-lg), inset 0 0 0 9px #14110E, inset 0 0 0 11px #2c2620}
+  .notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:150px;height:26px;
+    background:#14110E;border-radius:0 0 18px 18px;z-index:60}
+  .app{position:absolute;inset:11px;border-radius:34px;overflow:hidden;display:flex;flex-direction:column;background:var(--paper)}
+
+  /* top bar */
+  .topbar{padding:34px 20px 12px;display:flex;align-items:center;justify-content:space-between;
+    background:linear-gradient(180deg,var(--paper),rgba(251,246,238,0));position:relative;z-index:5}
+  .brand{display:flex;align-items:center;gap:9px}
+  .brand .toque{font-size:22px}
+  .brand h1{font-family:Fraunces;font-weight:600;font-size:23px;margin:0;letter-spacing:-.01em}
+  .brand h1 .bang{color:var(--paprika)}
+  .brand .sub{font-size:11px;color:var(--muted);margin-top:-2px}
+  .avatar{width:34px;height:34px;border-radius:50%;background:var(--paprika-tint);color:var(--paprika-d);
+    display:grid;place-items:center;font-weight:700;font-size:13px}
+
+  /* scroll body */
+  .body{flex:1;overflow-y:auto;padding:4px 16px 96px}
+  .body::-webkit-scrollbar{display:none}
+  .screen{display:none;animation:fade .25s ease}
+  .screen.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  .h-title{font-family:Fraunces;font-weight:600;font-size:26px;margin:6px 2px 2px;letter-spacing:-.02em}
+  .h-sub{color:var(--muted);font-size:13px;margin:0 2px 14px}
+
+  /* segmented */
+  .seg{display:flex;background:var(--surface-2);border-radius:12px;padding:4px;margin:0 0 16px;gap:4px}
+  .seg button{flex:1;border:0;background:transparent;font:inherit;font-size:13px;font-weight:600;color:var(--muted);
+    padding:8px;border-radius:9px;cursor:pointer}
+  .seg button.on{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+
+  /* store group */
+  .group{margin-bottom:18px}
+  .group-head{display:flex;align-items:center;gap:8px;margin:0 2px 8px}
+  .store-dot{width:9px;height:9px;border-radius:3px}
+  .group-head .nm{font-weight:700;font-size:14px}
+  .group-head .ct{color:var(--muted);font-size:12px;font-weight:600}
+  .group-head .badge{margin-left:auto;font-size:10.5px;font-weight:700;text-transform:uppercase;
+    letter-spacing:.04em;color:var(--muted)}
+
+  /* list card / rows */
+  .card{background:var(--surface);border-radius:16px;box-shadow:var(--shadow);overflow:hidden}
+  .row{display:flex;align-items:center;gap:12px;padding:13px 14px;border-bottom:1px solid var(--hair);cursor:pointer}
+  .row:last-child{border-bottom:0}
+  .check{width:24px;height:24px;border-radius:8px;border:2px solid var(--hair);flex:none;display:grid;place-items:center;
+    color:transparent;font-size:14px;transition:.15s}
+  .row.done .check{background:var(--sage);border-color:var(--sage);color:#fff}
+  .row.done .r-name{text-decoration:line-through;color:var(--muted)}
+  .r-main{flex:1;min-width:0}
+  .r-name{font-weight:600;font-size:14.5px;display:flex;align-items:center;gap:7px}
+  .r-need{font-size:12px;color:var(--muted);margin-top:2px}
+  .pill{font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;letter-spacing:.02em}
+  .pill.confirm{background:var(--amber-tint);color:#a9761a}
+  .pill.high{background:var(--sage-tint);color:var(--sage)}
+  .pill.out{background:var(--red-tint);color:var(--red)}
+  .r-zone{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;color:var(--muted)}
+  .chev{color:#cdbfac;font-size:18px}
+
+  /* summary strip */
+  .summary{display:flex;gap:10px;margin:0 0 16px}
+  .stat{flex:1;background:var(--surface);border-radius:14px;padding:12px;box-shadow:var(--shadow)}
+  .stat .n{font-family:Fraunces;font-weight:600;font-size:22px;line-height:1}
+  .stat .l{font-size:11px;color:var(--muted);margin-top:4px}
+
+  /* kitchen grid */
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .place{background:var(--surface);border-radius:18px;padding:15px;box-shadow:var(--shadow);cursor:pointer;
+    position:relative;overflow:hidden;min-height:104px;display:flex;flex-direction:column;justify-content:space-between}
+  .place .ptop{height:4px;border-radius:4px;width:38px;margin-bottom:10px}
+  .place .picon{font-size:26px;line-height:1}
+  .place .pname{font-weight:700;font-size:15px;margin-top:8px}
+  .place .pmeta{font-size:11.5px;color:var(--muted);margin-top:2px;font-weight:500}
+  .place .pmeta.low{color:var(--amber)}
+  .place .pmeta.good{color:var(--sage)}
+  .place.recipe{grid-column:1 / -1;flex-direction:row;align-items:center;gap:14px;min-height:auto}
+  .place.recipe .picon{font-size:28px}
+  .place.recipe .rc{flex:1}
+
+  /* place detail items */
+  .backbar{display:flex;align-items:center;gap:10px;margin:2px 0 12px}
+  .back{width:34px;height:34px;border-radius:10px;background:var(--surface);box-shadow:var(--shadow);
+    display:grid;place-items:center;cursor:pointer;font-size:17px;border:0;color:var(--ink)}
+  .backbar .bt{font-family:Fraunces;font-weight:600;font-size:20px}
+  .backbar .bmeta{color:var(--muted);font-size:12px;margin-left:auto}
+
+  .item{background:var(--surface);border-radius:15px;box-shadow:var(--shadow);padding:12px 13px;margin-bottom:10px}
+  .item .itop{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+  .item .inm{font-weight:600;font-size:14.5px}
+  .item .isz{font-size:11px;color:var(--muted)}
+  .item .flag{margin-left:auto;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px}
+  .flag.low{background:var(--amber-tint);color:#a9761a}
+  .flag.out{background:var(--red-tint);color:var(--red)}
+  .flag.ok{background:var(--sage-tint);color:var(--sage)}
+
+  .chips{display:flex;gap:6px}
+  .chip{flex:1;border:1.5px solid var(--hair);background:var(--surface);border-radius:10px;padding:8px 0;text-align:center;
+    font-size:12px;font-weight:600;color:var(--muted);cursor:pointer}
+  .chip.on{color:#fff}
+  .chip.full.on{background:var(--sage);border-color:var(--sage)}
+  .chip.half.on{background:var(--amber);border-color:var(--amber)}
+  .chip.low.on{background:#d98a2b;border-color:#d98a2b}
+  .chip.out.on{background:var(--red);border-color:var(--red)}
+
+  .stepper{display:flex;align-items:center;gap:0;background:var(--surface-2);border-radius:11px;overflow:hidden;width:fit-content}
+  .stepper button{width:42px;height:38px;border:0;background:transparent;font-size:20px;color:var(--paprika-d);cursor:pointer;font-weight:600}
+  .stepper .val{min-width:52px;text-align:center;font-weight:700;font-size:15px}
+  .step-row{display:flex;align-items:center;justify-content:space-between}
+  .step-row .out-btn{border:1.5px solid var(--hair);background:var(--surface);color:var(--red);font-weight:700;
+    font-size:12px;padding:9px 14px;border-radius:10px;cursor:pointer}
+
+  .linecheck{position:sticky;bottom:8px;margin-top:6px;width:100%;background:var(--paprika);color:#fff;border:0;
+    padding:15px;border-radius:15px;font:inherit;font-weight:700;font-size:15px;cursor:pointer;box-shadow:0 8px 22px rgba(216,92,52,.35)}
+  .linecheck .k{opacity:.85;font-weight:500;font-size:12px}
+
+  /* add screen */
+  .add-card{background:var(--surface);border-radius:18px;box-shadow:var(--shadow);padding:16px;margin-bottom:14px}
+  .add-card h3{margin:0 0 3px;font-size:15px;font-weight:700}
+  .add-card p{margin:0 0 12px;font-size:12px;color:var(--muted)}
+  .add-card .ic{font-size:22px}
+  .add-head{display:flex;align-items:center;gap:10px;margin-bottom:2px}
+  .input{width:100%;border:1.5px solid var(--hair);border-radius:12px;padding:12px;font:inherit;font-size:14px;background:var(--surface-2)}
+  textarea.input{resize:none;min-height:84px;font-family:ui-monospace,monospace;font-size:12.5px}
+  .qa-row{display:flex;gap:8px;margin-top:9px}
+  .lvl{display:flex;gap:6px}
+  .lvl .chip{padding:8px 12px;flex:none}
+  .cam{width:100%;border:2px dashed #E0C9BC;background:var(--paprika-tint);border-radius:16px;padding:24px;text-align:center;cursor:pointer}
+  .cam .big{font-size:34px}
+  .cam .t{font-weight:700;margin-top:6px;color:var(--paprika-d)}
+  .cam .s{font-size:11.5px;color:#b07a63;margin-top:3px}
+  .soon{display:inline-block;margin-top:8px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;
+    background:#efe0d8;color:#b07a63;padding:3px 8px;border-radius:20px}
+
+  /* recipes */
+  .rec{background:var(--surface);border-radius:16px;box-shadow:var(--shadow);padding:14px;margin-bottom:11px;display:flex;gap:12px;align-items:center}
+  .rec .remoji{font-size:30px}
+  .rec .rmain{flex:1}
+  .rec .rt{font-weight:700;font-size:14.5px}
+  .rec .rs{font-size:11.5px;color:var(--muted);margin-top:2px}
+  .rec .made{border:0;background:var(--sage);color:#fff;font:inherit;font-weight:700;font-size:12px;padding:9px 12px;border-radius:11px;cursor:pointer}
+  .rec .miss{border:0;background:var(--amber-tint);color:#a9761a;font:inherit;font-weight:700;font-size:12px;padding:9px 12px;border-radius:11px;cursor:pointer}
+
+  /* item detail sheet */
+  .scrim{position:absolute;inset:0;background:rgba(30,25,20,.4);z-index:70;display:none;align-items:flex-end}
+  .scrim.open{display:flex}
+  .sheet{background:var(--paper);width:100%;border-radius:26px 26px 0 0;padding:8px 18px 22px;max-height:86%;overflow-y:auto;
+    box-shadow:var(--shadow-lg)}
+  .grab{width:40px;height:5px;border-radius:5px;background:#dcd0bf;margin:6px auto 14px}
+  .sheet .sh-top{display:flex;align-items:center;gap:10px}
+  .sheet .sh-nm{font-family:Fraunces;font-weight:600;font-size:22px}
+  .zone-tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#fff;padding:3px 8px;border-radius:20px}
+  .level-bar{height:10px;border-radius:6px;background:var(--surface-2);overflow:hidden;margin:14px 0 4px}
+  .level-bar span{display:block;height:100%;background:linear-gradient(90deg,var(--amber),var(--paprika))}
+  .field{margin-top:14px}
+  .field label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+  .field .fv{margin-top:6px;display:flex;align-items:center;gap:8px;background:var(--surface);border:1.5px solid var(--hair);
+    border-radius:12px;padding:12px;font-size:14px;font-weight:500}
+  .field .fv .chev{margin-left:auto}
+  .store-menu{background:var(--surface);border:1.5px solid var(--hair);border-radius:12px;margin-top:6px;overflow:hidden}
+  .store-opt{display:flex;align-items:center;gap:9px;padding:11px 12px;border-bottom:1px solid var(--hair);font-size:14px;cursor:pointer}
+  .store-opt:last-child{border-bottom:0}
+  .store-opt.sel{background:var(--paprika-tint);font-weight:700}
+  .store-opt.add{color:var(--paprika-d);font-weight:700}
+  .meta-grid{display:flex;gap:10px;margin-top:14px}
+  .meta-grid .m{flex:1;background:var(--surface);border-radius:12px;padding:11px;box-shadow:var(--shadow)}
+  .meta-grid .m .k{font-size:10.5px;color:var(--muted);font-weight:600}
+  .meta-grid .m .v{font-weight:700;font-size:15px;margin-top:3px}
+
+  /* tabbar */
+  .tabbar{position:absolute;left:11px;right:11px;bottom:11px;height:74px;background:rgba(255,255,255,.86);
+    backdrop-filter:blur(14px);border-top:1px solid var(--hair);display:flex;border-radius:0 0 34px 34px;z-index:40}
+  .tab{flex:1;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+    cursor:pointer;color:var(--muted);font:inherit;padding-bottom:12px}
+  .tab .ti{font-size:20px;line-height:1}
+  .tab .tl{font-size:10.5px;font-weight:600}
+  .tab.on{color:var(--paprika)}
+  .fab{position:absolute;right:22px;bottom:96px;width:56px;height:56px;border-radius:50%;background:var(--paprika);color:#fff;
+    border:0;font-size:28px;box-shadow:0 8px 22px rgba(216,92,52,.4);cursor:pointer;z-index:45}
+</style>
+</head>
+<body>
+<div class="device">
+  <div class="notch"></div>
+  <div class="app">
+    <div class="topbar">
+      <div class="brand">
+        <span class="toque">🧑‍🍳</span>
+        <div>
+          <h1>Yes Chef<span class="bang">!</span></h1>
+          <div class="sub">Our kitchen · Sunday</div>
+        </div>
+      </div>
+      <div class="avatar">J</div>
+    </div>
+
+    <div class="body">
+
+      <!-- ============ LIST ============ -->
+      <section class="screen active" id="list">
+        <div class="h-title">This week</div>
+        <p class="h-sub">8 to reorder · tap ✓ as you order. Predicted items say <b>confirm?</b></p>
+        <div class="summary">
+          <div class="stat"><div class="n" style="color:var(--red)">3</div><div class="l">out</div></div>
+          <div class="stat"><div class="n" style="color:var(--amber)">3</div><div class="l">low</div></div>
+          <div class="stat"><div class="n" style="color:var(--paprika)">2</div><div class="l">confirm?</div></div>
+        </div>
+        <div class="seg">
+          <button class="on">By store</button>
+          <button>By zone</button>
+        </div>
+
+        <div class="group">
+          <div class="group-head"><span class="store-dot" style="background:var(--z-freezer)"></span>
+            <span class="nm">Warehouse club</span><span class="ct">· 2</span><span class="badge">warehouse</span></div>
+          <div class="card">
+            <div class="row" onclick="openItem('Frozen waffles','freezer')"><div class="check">✓</div>
+              <div class="r-main"><div class="r-name">Frozen waffles <span class="pill out">out</span></div>
+              <div class="r-need">Restock to full + a backup</div></div><span class="chev">›</span></div>
+            <div class="row" onclick="openItem('K-cups','pantry')"><div class="check">✓</div>
+              <div class="r-main"><div class="r-name">K-cups <span class="pill high">low</span></div>
+              <div class="r-need">Restock to full</div></div><span class="chev">›</span></div>
+          </div>
+        </div>
+
+        <div class="group">
+          <div class="group-head"><span class="store-dot" style="background:var(--z-fridge)"></span>
+            <span class="nm">Grocery store</span><span class="ct">· 2</span><span class="badge">grocery</span></div>
+          <div class="card">
+            <div class="row" onclick="openItem('Cheddar cheese','fridge')"><div class="check">✓</div>
+              <div class="r-main"><div class="r-name">Cheddar cheese <span class="pill high">low</span></div>
+              <div class="r-need">Restock to full</div></div><span class="chev">›</span></div>
+            <div class="row" onclick="openItem('Strawberries','fridge')"><div class="check">✓</div>
+              <div class="r-main"><div class="r-name">Strawberries <span class="pill out">out</span></div>
+              <div class="r-need">2 more · up to par 2</div></div><span class="chev">›</span></div>
+          </div>
+        </div>
+
+        <div class="group">
+          <div class="group-head"><span class="store-dot" style="background:var(--sage)"></span>
+            <span class="nm">Grocery store</span><span class="ct">· 2</span><span class="badge">grocery</span></div>
+          <div class="card">
+            <div class="row" onclick="openItem('Skim Milk','fridge')"><div class="check">✓</div>
+              <div class="r-main"><div class="r-name">Skim Milk <span class="pill out">out</span></div>
+              <div class="r-need">Restock to full + a backup</div></div><span class="chev">›</span></div>
+            <div class="row" onclick="openItem('Bananas','counter')"><div class="check">✓</div>
+              <div class="r-main"><div class="r-name">Bananas <span class="pill confirm">confirm?</span></div>
+              <div class="r-need">~5 left after 6d at usual rate</div></div><span class="chev">›</span></div>
+          </div>
+        </div>
+
+        <div class="group">
+          <div class="group-head"><span class="store-dot" style="background:var(--z-deep)"></span>
+            <span class="nm">Amazon</span><span class="ct">· 1</span><span class="badge">online</span></div>
+          <div class="card">
+            <div class="row" onclick="openItem('Breakfast tea','pantry')"><div class="check">✓</div>
+              <div class="r-main"><div class="r-name">Breakfast tea <span class="pill confirm">confirm?</span></div>
+              <div class="r-need">~low after 30d · subscribe &amp; save</div></div><span class="chev">›</span></div>
+          </div>
+        </div>
+
+        <div class="group">
+          <div class="group-head"><span class="store-dot" style="background:#cdbfac"></span>
+            <span class="nm">Unassigned</span><span class="ct">· 1</span><span class="badge">pick a store</span></div>
+          <div class="card">
+            <div class="row" onclick="openItem('Peanut butter','pantry')"><div class="check">✓</div>
+              <div class="r-main"><div class="r-name">Peanut butter <span class="pill high">low</span></div>
+              <div class="r-need">Tap to set a store</div></div><span class="chev">›</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ KITCHEN ============ -->
+      <section class="screen" id="kitchen">
+        <div class="h-title">Kitchen</div>
+        <p class="h-sub">Go to a place and look — just like real life.</p>
+        <div class="grid">
+          <div class="place" onclick="showPlace()">
+            <div><div class="ptop" style="background:var(--z-pantry)"></div><div class="picon">🥫</div></div>
+            <div><div class="pname">Pantry</div><div class="pmeta low">17 items · 1 low</div></div></div>
+          <div class="place" onclick="showPlace()">
+            <div><div class="ptop" style="background:var(--z-fridge)"></div><div class="picon">🧊</div></div>
+            <div><div class="pname">Fridge</div><div class="pmeta low">14 items · 3 low</div></div></div>
+          <div class="place" onclick="showPlace()">
+            <div><div class="ptop" style="background:var(--z-freezer)"></div><div class="picon">❄️</div></div>
+            <div><div class="pname">Freezer</div><div class="pmeta low">5 items · 1 out</div></div></div>
+          <div class="place" onclick="showPlace()">
+            <div><div class="ptop" style="background:var(--z-deep)"></div><div class="picon">🧊</div></div>
+            <div><div class="pname">Deep Freezer</div><div class="pmeta">Empty · tap to set up</div></div></div>
+          <div class="place" onclick="showPlace()">
+            <div><div class="ptop" style="background:var(--z-counter)"></div><div class="picon">🍌</div></div>
+            <div><div class="pname">Counter</div><div class="pmeta good">2 items · stocked</div></div></div>
+          <div class="place" onclick="go('recipes')">
+            <div><div class="ptop" style="background:var(--z-recipe)"></div><div class="picon">📖</div></div>
+            <div><div class="pname">Recipes</div><div class="pmeta">6 saved · 4 ready</div></div></div>
+          <div class="place recipe" style="background:var(--surface-2);box-shadow:none;border:1.5px dashed var(--hair)"
+               onclick="showPlace()">
+            <div class="picon">➕</div>
+            <div class="rc"><div class="pname">Line Check</div>
+            <div class="pmeta">Walk one place, confirm every item — 60 seconds</div></div>
+            <span class="chev">›</span></div>
+        </div>
+      </section>
+
+      <!-- ============ PLACE (Fridge) ============ -->
+      <section class="screen" id="place">
+        <div class="backbar"><button class="back" onclick="go('kitchen')">‹</button>
+          <span class="bt">Fridge</span><span class="bmeta">14 items · 3 low</span></div>
+
+        <div class="item">
+          <div class="itop"><span class="inm">Skim Milk</span><span class="isz">· 1 gal · Grocery store</span><span class="flag out">out</span></div>
+          <div class="chips"><div class="chip full">Full</div><div class="chip half">Half</div><div class="chip low">Low</div><div class="chip out on">Out</div></div>
+        </div>
+        <div class="item">
+          <div class="itop"><span class="inm">Cheddar cheese</span><span class="isz">· Grocery store</span><span class="flag low">low</span></div>
+          <div class="chips"><div class="chip full">Full</div><div class="chip half">Half</div><div class="chip low on">Low</div><div class="chip out">Out</div></div>
+        </div>
+        <div class="item">
+          <div class="itop"><span class="inm">Strawberries</span><span class="isz">· 2 containers · Grocery store</span><span class="flag out">out</span></div>
+          <div class="step-row"><div class="stepper"><button>−</button><span class="val">0</span><button>+</button></div>
+            <span class="isz">par 2 · reorder at ½</span></div>
+        </div>
+        <div class="item">
+          <div class="itop"><span class="inm">Eggs</span><span class="isz">· Grocery store</span><span class="flag ok">at par</span></div>
+          <div class="step-row"><div class="stepper"><button>−</button><span class="val">35</span><button>+</button></div>
+            <button class="out-btn">Mark out</button></div>
+        </div>
+        <div class="item">
+          <div class="itop"><span class="inm">Butter</span><span class="isz">· Grocery store</span><span class="flag ok">full</span></div>
+          <div class="chips"><div class="chip full on">Full</div><div class="chip half">Half</div><div class="chip low">Low</div><div class="chip out">Out</div></div>
+        </div>
+        <div class="item">
+          <div class="itop"><span class="inm">Yogurt Pouches</span><span class="isz">· · Grocery store</span><span class="flag ok">at par</span></div>
+          <div class="step-row"><div class="stepper"><button>−</button><span class="val">8</span><button>+</button></div>
+            <button class="out-btn">Mark out</button></div>
+        </div>
+        <button class="linecheck">Start Fridge Line Check <span class="k">· 14 items, ~1 min</span></button>
+      </section>
+
+      <!-- ============ RECIPES ============ -->
+      <section class="screen" id="recipes">
+        <div class="backbar"><button class="back" onclick="go('kitchen')">‹</button>
+          <span class="bt">Recipes</span><span class="bmeta">6 saved</span></div>
+        <p class="h-sub">Tap “I made this” and Yes Chef depletes the ingredients for you.</p>
+        <div class="rec"><span class="remoji">🍝</span><div class="rmain"><div class="rt">Weeknight pasta</div>
+          <div class="rs">Ready · pasta, tomatoes, olive oil, cheddar</div></div><button class="made">I made this</button></div>
+        <div class="rec"><span class="remoji">🥞</span><div class="rmain"><div class="rt">Protein pancakes</div>
+          <div class="rs">Ready · mix, eggs, skim milk, syrup</div></div><button class="made">I made this</button></div>
+        <div class="rec"><span class="remoji">🌯</span><div class="rmain"><div class="rt">Chicken & rice bowls</div>
+          <div class="rs">Ready · chicken, rice, mixed veg</div></div><button class="made">I made this</button></div>
+        <div class="rec"><span class="remoji">🥗</span><div class="rmain"><div class="rt">Berry yogurt bowls</div>
+          <div class="rs">Missing 1 · strawberries (out)</div></div><button class="miss">Add missing</button></div>
+        <div class="rec"><span class="remoji">🍞</span><div class="rmain"><div class="rt">PB&J lunchboxes</div>
+          <div class="rs">Ready · bread, peanut butter, raspberry jelly</div></div><button class="made">I made this</button></div>
+        <div class="rec" style="background:var(--surface-2);box-shadow:none;justify-content:center;border:1.5px dashed var(--hair)">
+          <span style="color:var(--paprika-d);font-weight:700">＋ Add a recipe</span></div>
+      </section>
+
+      <!-- ============ ADD ============ -->
+      <section class="screen" id="add">
+        <div class="h-title">Add</div>
+        <p class="h-sub">Three ways to tell Yes Chef what changed.</p>
+        <div class="add-card">
+          <div class="add-head"><span class="ic">⚡</span><h3>Quick-add</h3></div>
+          <p>Noticed something's low? Type it — resolves through your aliases.</p>
+          <input class="input" placeholder="e.g. out of olive oil">
+          <div class="qa-row"><div class="lvl"><div class="chip low on" style="flex:none;padding:8px 14px">Low</div>
+            <div class="chip out" style="flex:none;padding:8px 14px">Out</div></div></div>
+        </div>
+        <div class="add-card">
+          <div class="add-head"><span class="ic">🧾</span><h3>Paste a receipt</h3></div>
+          <p>One item per line. Refunds aren't credited (that's the anti-over-order rule).</p>
+          <textarea class="input" placeholder="2 large eggs&#10;1 skim milk&#10;1 frozen waffles #substituted"></textarea>
+        </div>
+        <div class="add-card">
+          <div class="add-head"><span class="ic">📹</span><h3>Record a kitchen pass</h3></div>
+          <p>Open your camera, pan across a shelf, and Yes Chef will read levels from it.</p>
+          <div class="cam"><div class="big">📷</div><div class="t">Tap to record or upload</div>
+            <div class="s">Launches your phone camera · uploads to your NAS</div>
+            <div class="soon">Capture now · AI reading soon</div></div>
+        </div>
+      </section>
+
+      <!-- ============ STATS ============ -->
+      <section class="screen" id="stats">
+        <div class="h-title">Is it working?</div>
+        <p class="h-sub">Trust the list when precision &amp; recall are high, effort is low.</p>
+        <div class="meta-grid">
+          <div class="m"><div class="k">Precision</div><div class="v" style="color:var(--sage)">92%</div></div>
+          <div class="m"><div class="k">Recall</div><div class="v" style="color:var(--sage)">96%</div></div>
+          <div class="m"><div class="k">Upkeep</div><div class="v">4<span style="font-size:11px;color:var(--muted)">min/wk</span></div></div>
+        </div>
+        <div class="add-card" style="margin-top:14px">
+          <div class="add-head"><span class="ic">📈</span><h3>This month</h3></div>
+          <p>1 missed run-out · 3 false alarms dismissed · Every item tracked across your stores.</p>
+        </div>
+      </section>
+
+    </div><!-- /body -->
+
+    <!-- item detail sheet -->
+    <div class="scrim" id="scrim" onclick="if(event.target.id==='scrim')closeItem()">
+      <div class="sheet">
+        <div class="grab"></div>
+        <div class="sh-top"><span class="sh-nm" id="sh-nm">Skim Milk</span>
+          <span class="zone-tag" id="sh-zone" style="background:var(--z-fridge)">FRIDGE</span></div>
+        <div style="font-size:12px;color:var(--muted);margin-top:4px" id="sh-est">Estimated: out · last updated 2 days ago</div>
+        <div class="level-bar"><span id="sh-level" style="width:8%"></span></div>
+        <div style="font-size:11px;color:var(--muted)">estimate — never asserted as truth</div>
+
+        <div class="chips" style="margin-top:16px"><div class="chip full">Full</div><div class="chip half">Half</div>
+          <div class="chip low">Low</div><div class="chip out on">Out</div></div>
+
+        <div class="field"><label>Store</label>
+          <div class="store-menu">
+            <div class="store-opt add">＋ Add new store…</div>
+            <div class="store-opt">🟣 Amazon</div>
+            <div class="store-opt">🔵 Warehouse club</div>
+            <div class="store-opt sel">🟢 Grocery store ✓</div>
+            <div class="store-opt">🟦 Natural foods store</div>
+            <div class="store-opt">🟩 Grocery store</div>
+          </div>
+        </div>
+
+        <div class="meta-grid">
+          <div class="m"><div class="k">Brand</div><div class="v" style="font-size:13px">—</div></div>
+          <div class="m"><div class="k">Size</div><div class="v" style="font-size:13px">1 gal</div></div>
+          <div class="m"><div class="k">Par</div><div class="v">full</div></div>
+        </div>
+        <button class="linecheck" style="position:static;margin-top:18px;box-shadow:none;background:var(--ink)" onclick="closeItem()">Done</button>
+      </div>
+    </div>
+
+    <button class="fab" onclick="go('add')">＋</button>
+
+    <!-- tab bar -->
+    <div class="tabbar">
+      <button class="tab on" data-t="list" onclick="go('list')"><span class="ti">📝</span><span class="tl">List</span></button>
+      <button class="tab" data-t="kitchen" onclick="go('kitchen')"><span class="ti">🏠</span><span class="tl">Kitchen</span></button>
+      <button class="tab" data-t="add" onclick="go('add')"><span class="ti">➕</span><span class="tl">Add</span></button>
+      <button class="tab" data-t="stats" onclick="go('stats')"><span class="ti">📊</span><span class="tl">Stats</span></button>
+    </div>
+
+  </div><!-- /app -->
+</div><!-- /device -->
+
+<script>
+  const zoneColor={fridge:'var(--z-fridge)',freezer:'var(--z-freezer)',pantry:'var(--z-pantry)',counter:'var(--z-counter)',deep:'var(--z-deep)'};
+  function go(id){
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    const tabFor = (id==='place'||id==='recipes')?'kitchen':id;
+    document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.dataset.t===tabFor));
+    document.querySelector('.body').scrollTop=0;
+  }
+  function showPlace(){ go('place'); }
+  function openItem(name,zone){
+    document.getElementById('sh-nm').textContent=name;
+    const z=document.getElementById('sh-zone');
+    z.textContent=(zone||'fridge').toUpperCase(); z.style.background=zoneColor[zone]||'var(--z-fridge)';
+    document.getElementById('scrim').classList.add('open');
+  }
+  function closeItem(){ document.getElementById('scrim').classList.remove('open'); }
+  // let list-row checks toggle
+  document.querySelectorAll('#list .row').forEach(r=>{
+    r.querySelector('.check').addEventListener('click',e=>{e.stopPropagation();r.classList.toggle('done');});
+  });
+</script>
+</body>
+</html>
